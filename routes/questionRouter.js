@@ -6,6 +6,8 @@ const Questions = require ('../models/questions');
 
 const questionRouter = express.Router();
 
+var authenticate = require('../authenticate');
+
 questionRouter.use(bodyParser.json());
 
 questionRouter.route('/')
@@ -18,7 +20,7 @@ questionRouter.route('/')
 	}, (err) => next(err))
 	.catch((err) => next(err));	
 })
-.post((req,res,next) => {
+.post(authenticate.verifyUser, (req,res,next) => {
 	Questions.create(req.body)
 	.then((question) => {
 		console.log('Question Created ', question);
@@ -28,11 +30,11 @@ questionRouter.route('/')
 	}, (err) => next(err))
 	.catch((err) => next(err));
 })
-.put((req,res,next) => {
+.put(authenticate.verifyUser, (req,res,next) => {
 	res.statusCode = 403;
 	res.end('PUT operation not supported on /questions');
 })
-.delete((req,res,next) => {
+.delete(authenticate.verifyUser, (req,res,next) => {
 	Questions.remove({})
 	.then((resp) => {
 		res.statusCode = 200;
@@ -51,11 +53,11 @@ questionRouter.route('/:questionId')
 		res.json(question);
 	}, (err) => next(err));
 })
-.post((req,res,next) => {
+.post(authenticate.verifyUser, (req,res,next) => {
 	res.statusCode = 403;
 	res.end('POST operation not supported on /questions/'+ req.params.questionId);
 })
-.put((req, res, next) => {
+.put(authenticate.verifyUser, (req,res,next) => {
 	Questions.findByIdAndUpdate(req.params.questionId, {
 		$set: req.body
 	}, { new: true })
@@ -66,7 +68,7 @@ questionRouter.route('/:questionId')
 	}, (err) => next(err))
 	.catch((err) => next(err));
 })
-.delete((req,res,next) => {
+.delete(authenticate.verifyUser, (req,res,next) => {
 	Questions.findByIdAndRemove(req.params.questionId)
 	.then((resp) => {
 		res.statusCode = 200;
