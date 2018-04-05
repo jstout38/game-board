@@ -10,6 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var questionRouter = require('./routes/questionRouter');
 var categoryRouter = require('./routes/categoryRouter');
+var gameRouter = require('./routes/gameRouter');
 
 var passport = require('passport');
 var authenticate = require('./authenticate');
@@ -64,6 +65,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/questions', questionRouter);
 app.use('/categories', categoryRouter);
+app.use('/games', gameRouter);
 
 
 // catch 404 and forward to error handler
