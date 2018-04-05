@@ -10,7 +10,7 @@ const questionSchema = new Schema({
 		type: Number,
 		required: true
 	},
-	Author: {
+	author: {
 		type: String
 	}
 },{

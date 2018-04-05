@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('./cors');
 
 const Questions = require ('../models/questions');
 
@@ -11,7 +12,8 @@ var authenticate = require('../authenticate');
 questionRouter.use(bodyParser.json());
 
 questionRouter.route('/')
-.get((req,res,next) => {
+.options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
+.get(cors.cors, (req,res,next) => {
 	Questions.find({})
 	.then((questions) => {
 		res.statusCode = 200;
@@ -20,7 +22,7 @@ questionRouter.route('/')
 	}, (err) => next(err))
 	.catch((err) => next(err));	
 })
-.post(authenticate.verifyUser, (req,res,next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	Questions.create(req.body)
 	.then((question) => {
 		console.log('Question Created ', question);
@@ -30,11 +32,11 @@ questionRouter.route('/')
 	}, (err) => next(err))
 	.catch((err) => next(err));
 })
-.put(authenticate.verifyUser, (req,res,next) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	res.statusCode = 403;
 	res.end('PUT operation not supported on /questions');
 })
-.delete(authenticate.verifyUser, (req,res,next) => {
+.delete(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	Questions.remove({})
 	.then((resp) => {
 		res.statusCode = 200;
@@ -45,7 +47,8 @@ questionRouter.route('/')
 });
 
 questionRouter.route('/:questionId')
-.get((req,res,next) => {
+.options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
+.get(cors.cors, (req,res,next) => {
 	Questions.findById(req.params.questionId)
 	.then((question) => {
 		res.statusCode = 200;
@@ -53,11 +56,11 @@ questionRouter.route('/:questionId')
 		res.json(question);
 	}, (err) => next(err));
 })
-.post(authenticate.verifyUser, (req,res,next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	res.statusCode = 403;
 	res.end('POST operation not supported on /questions/'+ req.params.questionId);
 })
-.put(authenticate.verifyUser, (req,res,next) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	Questions.findByIdAndUpdate(req.params.questionId, {
 		$set: req.body
 	}, { new: true })
@@ -68,7 +71,7 @@ questionRouter.route('/:questionId')
 	}, (err) => next(err))
 	.catch((err) => next(err));
 })
-.delete(authenticate.verifyUser, (req,res,next) => {
+.delete(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	Questions.findByIdAndRemove(req.params.questionId)
 	.then((resp) => {
 		res.statusCode = 200;
