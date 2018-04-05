@@ -6,6 +6,14 @@ var User = new Schema({
 	admin: {
 		type: Boolean,
 		default: false
+	},
+	firstname: {
+		type: String,
+		require: true
+	},
+	lastname: {
+		type: String,
+		require: true
 	}
 });
 

@@ -17,6 +17,7 @@ gameRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.cors, (req,res,next) => {
 	Games.find({})
+	.populate('author')
 	.then((games) => {
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'application/json');
@@ -25,6 +26,7 @@ gameRouter.route('/')
 	.catch((err) => next(err));	
 })
 .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+	req.body.author = req.user._id;
 	Games.create(req.body)
 	.then((game) => {
 		console.log('Game Created ', game);
@@ -52,6 +54,7 @@ gameRouter.route('/:gameId')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.cors, (req,res,next) => {
 	Games.findById(req.params.gameId)
+	.populate('author')
 	.then((game) => {
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'application/json');
@@ -87,6 +90,7 @@ gameRouter.route('/:gameId/categories')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.cors, (req,res,next) => {
 	Games.findById(req.params.gameId)
+	.populate('author')
 	.then((game) => {
 		if (game != null) {
 			res.statusCode = 200;

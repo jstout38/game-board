@@ -16,6 +16,7 @@ categoryRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.cors, (req,res,next) => {
 	Categories.find({})
+	.populate('author')
 	.then((categories) => {
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'application/json');
@@ -24,6 +25,7 @@ categoryRouter.route('/')
 	.catch((err) => next(err));	
 })
 .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+	req.body.author = req.user._id
 	Categories.create(req.body)
 	.then((category) => {
 		console.log('Category Created ', category);
@@ -51,6 +53,7 @@ categoryRouter.route('/:categoryId')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.cors, (req,res,next) => {
 	Categories.findById(req.params.categoryId)
+	.populate('author')
 	.then((category) => {
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'application/json');
@@ -86,6 +89,7 @@ categoryRouter.route('/:categoryId/questions')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.cors, (req,res,next) => {
 	Categories.findById(req.params.categoryId)
+	.populate('author')
 	.then((category) => {
 		if (category != null) {
 			res.statusCode = 200;
@@ -104,6 +108,7 @@ categoryRouter.route('/:categoryId/questions')
 	Categories.findById(req.params.categoryId)
 	.then((category) => {
 		if (category != null) {
+			req.body.author = req.user._id
 			category.questions.push(req.body);
 			category.save()
 			.then((category) => {
