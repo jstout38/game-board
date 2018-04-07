@@ -58,14 +58,14 @@ app.use(passport.initialize());
 
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/users', usersRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/questions', questionRouter);
-app.use('/categories', categoryRouter);
-app.use('/games', gameRouter);
+app.use('/api/questions', questionRouter);
+app.use('/api/categories', categoryRouter);
+app.use('/api/games', gameRouter);
 
 
 // catch 404 and forward to error handler

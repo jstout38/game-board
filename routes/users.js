@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const cors = require('./cors')
 
 const bodyParser = require('body-parser');
 var User = require('../models/user');
@@ -10,7 +11,7 @@ var authenticate = require('../authenticate');
 router.use(bodyParser.json());
 
 /* POST to signup route to create a new user */
-router.post('/signup', (req, res, next) => {
+router.post('/signup', cors.cors, (req, res, next) => {
 	User.register(new User({username: req.body.username}),
 		req.body.password, (err, user) => {
 		if(err) {
@@ -41,7 +42,7 @@ router.post('/signup', (req, res, next) => {
 });
 
 /* POST to login route to sign in as a user */
-router.post('/login', passport.authenticate('local'), (req, res) => {
+router.post('/login', cors.cors, passport.authenticate('local'), (req, res) => {
 	var token = authenticate.getToken({_id: req.user._id});
 	res.statusCode = 200;
 	res.setHeader('Content-Type', 'application/json');
@@ -49,7 +50,7 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 /* GET logout route to log user out */
-router.get('/logout', (req, res, next) => {
+router.get('/logout', cors.cors, (req, res, next) => {
 	if (req.session) {
 		req.session.destroy();
 		res.clearCookie('session-id');
@@ -63,8 +64,16 @@ router.get('/logout', (req, res, next) => {
 });
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', cors.cors, function(req, res, next) {
+  User.find({})
+	.then((users) => {
+		res.statusCode = 200;
+		res.setHeader('Content-Type', 'application/json');
+		res.json(users);
+	}, (err) => next(err))
+	.catch((err) => next(err));	
 });
+
+
 
 module.exports = router;
