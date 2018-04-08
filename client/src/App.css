@@ -39,6 +39,7 @@
   padding: 0;
   text-align: center;
   width: 10vw;
+  background-color: white;
 }
 
 .board-row:after {
@@ -50,11 +51,16 @@
 .game-board {
   margin-left: auto;
   margin-right: auto;
-  
+  background-color: white;  
 }
 
 .game-header {
   line-height: 10vh;
   height: 10vh;
-  float: center;
+  float:;
 }
+
+.placeholder {
+  color: white;
+}
+
