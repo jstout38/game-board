@@ -10,6 +10,8 @@ var authenticate = require('../authenticate');
 
 router.use(bodyParser.json());
 
+router.options('*', cors.corsWithOptions, (req, res) => { res.sendStatus(200); } )
+
 /* POST to signup route to create a new user */
 router.post('/signup', cors.cors, (req, res, next) => {
 	User.register(new User({username: req.body.username}),
@@ -42,12 +44,32 @@ router.post('/signup', cors.cors, (req, res, next) => {
 });
 
 /* POST to login route to sign in as a user */
-router.post('/login', cors.cors, passport.authenticate('local'), (req, res) => {
-	var token = authenticate.getToken({_id: req.user._id});
-	res.statusCode = 200;
-	res.setHeader('Content-Type', 'application/json');
-	res.json({success: true, token: token, status: 'You are successfully logged in!'});
-});
+router.post('/login', cors.cors, (req, res, next) => {
+	passport.authenticate('local', (err, user, info) => {
+		if (err)
+			return next(err);
+
+		if (!user) {
+			res.statusCode = 401;
+			res.setHeader('Content-Type', 'application/json');
+			res.json({success: false, status: 'Login Unsuccessful!', err: info});
+		}
+		req.logIn(user, (err) => {
+			if (err) {
+				res.statusCode = 401;
+				res.setHeader('Content-Type', 'application/json');
+				res.json({success: false, status: 'Login Unsuccessful!', err: 'Could not log in user!'});
+			}
+			
+			var token = authenticate.getToken({_id: req.user._id});
+			res.statusCode = 200;
+			res.setHeader('Content-Type', 'application/json');
+			res.json({success: true, token: token, status: 'You are successfully logged in!', userID: req.user._id, username: req.user.username});
+			});
+		}) (req, res, next);
+	});
+	
+
 
 /* GET logout route to log user out */
 router.get('/logout', cors.cors, (req, res, next) => {

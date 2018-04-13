@@ -3,6 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
+import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import Auth from './Auth';
 
 class Square extends React.Component {
   render() {
@@ -75,7 +77,7 @@ class Board extends React.Component {
   renderSquare(i, qNo) {
     if (this.state.completed[qNo]) {
       return (
-        <Square value={<text className="placeholder">blank</text>} onClick={() =>{}}/>
+        <Square value={<span className="placeholder">blank</span>} onClick={() =>{}}/>
         );
     }
     else {
@@ -159,9 +161,56 @@ class Board extends React.Component {
   }
 }
 
+class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: "",
+      password: ""
+    }
+  }
+
+  handleChange = event => {
+    this.setState({
+      [event.target.id]: event.target.value
+    })
+  }
+
+  handleSubmit = event => {
+    event.preventDefault();
+    this.props.login(this.state.username, this.state.password, () => {this.forceUpdate});
+  }
+
+  handleLogout = event => {
+    Auth.deauthenticateUser();
+    this.forceUpdate();
+  }
+
+  render() {
+    if (!Auth.isUserAuthenticated()) {
+      return (
+        <form onSubmit={this.handleSubmit}>
+          <Button className="button" type="submit">Submit</Button>
+          <FormGroup className="formgroup" controlId="password" >
+            <FormControl type="password" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
+          </FormGroup>
+          <FormGroup controlId="username" className="formgroup">
+            <FormControl className="formcontrol" value = {this.state.username} onChange={this.handleChange} type="text" placeholder="Enter User Name"/>
+          </FormGroup>
+        </form>
+      ) 
+    }
+    else {
+      return (
+        <p>Logged In as {Auth.getUserName()}
+        <button onClick={this.handleLogout}>Log Out</button></p>
+      )
+    }
+  }
+}
+
 class Game extends React.Component {
   render() {
-      console.log(this.props.game);
 
     return (
       <div className="game-board">
@@ -180,13 +229,42 @@ class Game extends React.Component {
 //);
 class App extends Component {
   
-  
+  constructor(props) {
+    super(props);
+    this.state = {
+      loggedIn: false,
+      token: null,
+      user: null,
+      username: null
+    }
+    
+  }
+
+  login = (username, password) => {
+      console.log(username);
+      console.log(password);
+      fetch('api/users/login', {
+        method: 'post',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': 'http://localhost:3001',
+          'Origin': 'http://localhost:3001'
+        }),
+        body: JSON.stringify({
+          "username": username,
+          "password": password,
+        }),
+      })
+      .then(res => res.json())
+      .then(res => {Auth.authenticateUser(res.token, res.username, res.userID)})
+  }
 
   render() {
 
     return (
       <div>
         <div className="game-header">
+          <Header login={this.login}/>
         </div>
         <div className="App">
           <Game />

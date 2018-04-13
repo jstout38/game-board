@@ -40,6 +40,7 @@
   text-align: center;
   width: 10vw;
   background-color: white;
+  white-space: nowrap;
 }
 
 .board-row:after {
@@ -64,3 +65,16 @@
   color: white;
 }
 
+.formgroup {
+  float:right;
+  margin: 10px;
+}
+
+.controllabel {
+  margin: 10px;
+}
+
+.button {
+  float: right;
+  margin: 10px;
+}
