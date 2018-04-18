@@ -4,6 +4,7 @@ const cors = require('./cors')
 
 const bodyParser = require('body-parser');
 var User = require('../models/user');
+var Game = require('../models/games');
 var passport = require('passport');
 
 var authenticate = require('../authenticate');
@@ -96,6 +97,16 @@ router.get('/', cors.cors, function(req, res, next) {
 	.catch((err) => next(err));	
 });
 
+router.get('/:userID', cors.cors, function(req, res, next) {
+  var query = { "author": req.params.userID };
+  Game.find(query)
+    .then((games) => {
+    	res.statusCode = 200;
+    	res.setHeader('Content-Type', 'application/json');
+    	res.json(games);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+});
 
 
 module.exports = router;

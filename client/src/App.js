@@ -96,7 +96,6 @@ class Board extends React.Component {
 
 
   render() {
-    console.log(this.state);
     const status = 'Next player: X';
     if (this.state.game.categories && !this.state.questionMode) {
     return (
@@ -178,12 +177,12 @@ class Header extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    this.props.login(this.state.username, this.state.password, () => {this.forceUpdate});
+    this.props.login(this.state.username, this.state.password);
   }
 
   handleLogout = event => {
-    Auth.deauthenticateUser();
-    this.forceUpdate();
+    event.preventDefault();
+    this.props.logout();
   }
 
   render() {
@@ -210,15 +209,49 @@ class Header extends React.Component {
 }
 
 class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state={
+      currentGame: null,
+      userGames: [],
+      loading: true,
+    }    
+  }
+
+
+  componentWillReceiveProps() {
+    console.log(this.props.user);
+    if (Auth.isUserAuthenticated()) {
+      fetch('api/users/' + Auth.getUserID())
+        .then(res => res.json())
+        .then(games => { 
+          this.setState({ 
+            userGames: games,    
+            loading: false        
+          });
+        });
+    }    
+  }
+
   render() {
 
-    return (
-      <div className="game-board">
-        <Board />
-      </div>
-      
-    );
+      if (Auth.isUserAuthenticated() && !this.state.loading) {
+        var games = [];
+        for (var i = 0; i < this.state.userGames.length; i++) {
+          games.push(<p key={this.state.userGames[i]}>{this.state.userGames[i].name}</p>);
+        }
+        return games;
+      }
+      else {
+        return (
+          <div className="game-board">
+            <Board />
+          </div>
+          
+        );
+      }
   }
+  
 }
 
 // ========================================
@@ -237,12 +270,19 @@ class App extends Component {
       user: null,
       username: null
     }
-    
+    this.refresh = this.refresh.bind(this);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+    if (Auth.isUserAuthenticated()) {
+      this.state.user = Auth.getUserID();
+    }
+  }
+
+  refresh = () => {
+    this.forceUpdate();
   }
 
   login = (username, password) => {
-      console.log(username);
-      console.log(password);
       fetch('api/users/login', {
         method: 'post',
         headers: new Headers({
@@ -256,7 +296,15 @@ class App extends Component {
         }),
       })
       .then(res => res.json())
-      .then(res => {Auth.authenticateUser(res.token, res.username, res.userID)})
+      .then(res => {
+        Auth.authenticateUser(res.token, res.username, res.userID);
+        this.setState({user: res.userID});
+      })      
+  }
+
+  logout = () => {
+    Auth.deauthenticateUser();
+    this.setState({user: null});
   }
 
   render() {
@@ -264,10 +312,10 @@ class App extends Component {
     return (
       <div>
         <div className="game-header">
-          <Header login={this.login}/>
+          <Header refresh = {this.refresh} login = {this.login} logout = {this.logout} />
         </div>
         <div className="App">
-          <Game />
+          <Game user = {Auth.getUserID()}/>
         </div>
       </div>
     );
