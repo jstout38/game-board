@@ -62,7 +62,7 @@ categoryRouter.route('/:categoryId')
 })
 .post(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	res.statusCode = 403;
-	res.end('POST operation not supported on /questions/' + req.params.categoryId);
+	res.end('POST operation not supported on /categories/' + req.params.categoryId);
 })
 .put(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	Categories.findByIdAndUpdate(req.params.categoryId, {

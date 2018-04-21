@@ -5,6 +5,7 @@ import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import Auth from './Auth';
+import CurrentGame from './CurrentGame';
 
 class Square extends React.Component {
   render() {
@@ -49,10 +50,11 @@ class Board extends React.Component {
     }
   }
 
-  componentDidMount() {
-    fetch('api/games/5ac9337d686a3c2ccc2c1253/')
+  componentWillReceiveProps() {
+    console.log(this.props.game);
+    fetch('api/games/' + CurrentGame.getGame())
       .then(res => res.json())
-      .then(game => this.setState({ game }));
+      .then(game => {this.setState({ game: game, questionMode: false }); CurrentGame.setGameData(game)});
   }
 
   returnToBoard() {
@@ -155,9 +157,144 @@ class Board extends React.Component {
     return(<Question question={this.state.currentQuestion} onClick = {() => this.returnToBoard()}/>);
   }
   else {
-    return <p></p>;
+    return <p>Test</p>;
   }
   }
+}
+
+class Creator extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      finished_cats: [],
+      category_title: "",
+      q1: "",
+      q2: "",
+      q3: "",
+      q4: "",
+      q5: "",
+      gameID: null,
+      gameName: "",
+    }
+  }
+
+  createCategories() {
+    for (var i = 0; i < 6; i++) {
+      var cat_data = this.state.finished_cats[i];
+      fetch('api/categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + Auth.getToken()
+        },
+        body: JSON.stringify({
+          "name": cat_data.name
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        var _id = res._id;
+        for (var j = 0; j < 5; j++) {
+          fetch('api/categories/' + _id + '/questions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + Auth.getToken()
+            },
+            body: JSON.stringify({
+              "question": cat_data.questions[j],
+              "value": ((j + 1) * 100)
+            })
+          })
+        }
+      })
+    }
+  }
+
+  createGame = event => {
+    event.preventDefault();
+    fetch('api/games', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer  ' + Auth.getToken()
+      },
+      body: JSON.stringify({
+        "name": this.state.gameName
+      })
+    })
+    .then(res => res.json())
+    .then(res => this.setState({gameID: res._id}))
+    .then(this.createCategories());
+  }
+
+  handleChange = event => {
+    this.setState({
+      [event.target.id]: event.target.value
+    })
+  }
+
+  handleSubmit = event => {
+    event.preventDefault();
+    var category = {
+      "name": this.state.category_title,
+      "questions": [
+        {
+          "q1": this.state.q1,
+          "q2": this.state.q2,
+          "q3": this.state.q3,
+          "q4": this.state.q4,
+          "q5": this.state.q5
+        }
+      ]
+    }
+    this.state.finished_cats.push(category);
+    this.setState({
+      category_title: "",
+      q1: "",
+      q2: "",
+      q3: "",
+      q4: "",
+      q5: ""
+    })
+  }
+
+  render() {
+    return(
+      <div>
+      <form onSubmit={this.handleSubmit}>
+        <FormGroup className="formgroup2" controlId="category_title">
+          <FormControl className="formcontrol" type="text" value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q1">
+          <FormControl className="formcontrol" type="text" value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q2">
+          <FormControl className="formcontrol" type="text" value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q3">
+          <FormControl className="formcontrol" type="text" value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q4">
+          <FormControl className="formcontrol" type="text" value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q5">
+          <FormControl className="formcontrol" type="text" value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
+        </FormGroup>
+        <Button className="button" type="submit">Submit</Button>
+      </form>
+      <p>{this.state.finished_cats.length}</p>
+      <form onSubmit={this.createGame}>
+      <FormGroup className="formgroup2" controlId="gameName">
+        <FormControl className="formcontrol" type="text" value = {this.state.gameName} onChange={this.handleChange} placeholder = "Game Name" />
+      </FormGroup>
+      <Button className="button" type="submit">Create Game</Button> 
+      </form>
+      </div>
+
+    )
+  }
+
 }
 
 class Header extends React.Component {
@@ -191,7 +328,7 @@ class Header extends React.Component {
         <form onSubmit={this.handleSubmit}>
           <Button className="button" type="submit">Submit</Button>
           <FormGroup className="formgroup" controlId="password" >
-            <FormControl type="password" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
+            <FormControl type="password" className="formcontrol" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
           </FormGroup>
           <FormGroup controlId="username" className="formgroup">
             <FormControl className="formcontrol" value = {this.state.username} onChange={this.handleChange} type="text" placeholder="Enter User Name"/>
@@ -201,8 +338,8 @@ class Header extends React.Component {
     }
     else {
       return (
-        <p>Logged In as {Auth.getUserName()}
-        <button onClick={this.handleLogout}>Log Out</button></p>
+        <span>Logged In as {Auth.getUserName()}
+        <button onClick={this.handleLogout}>Log Out</button></span>
       )
     }
   }
@@ -214,39 +351,73 @@ class Game extends React.Component {
     this.state={
       currentGame: null,
       userGames: [],
-      loading: true,
-    }    
+      createGame: false
+    } 
+    this.handleClick = this.handleClick.bind(this);   
+    this.handleCreate = this.handleCreate.bind(this);
   }
 
-
-  componentWillReceiveProps() {
-    console.log(this.props.user);
+  componentWillReceiveProps() {    
     if (Auth.isUserAuthenticated()) {
       fetch('api/users/' + Auth.getUserID())
         .then(res => res.json())
         .then(games => { 
           this.setState({ 
-            userGames: games,    
-            loading: false        
+            userGames: games,
+            createGame: false
           });
         });
+    } 
+    else {
+      this.setState({
+        createGame: false
+      })
     }    
+  } 
+
+  handleClick = (gameID) => (e) => {
+    if (gameID === -1) {
+      this.setState({createGame: true});
+    }
+    else {    
+      CurrentGame.setGame(gameID);
+      this.setState({currentGame: gameID}, function () {this.forceUpdate()});
+    }
+  }
+
+  handleCreate = () => (e) => {
+    e.preventDefault();
+    this.setState({createGame: true});
   }
 
   render() {
 
-      if (Auth.isUserAuthenticated() && !this.state.loading) {
+      if (Auth.isUserAuthenticated() && !this.state.currentGame && !this.state.createGame) {
         var games = [];
         for (var i = 0; i < this.state.userGames.length; i++) {
-          games.push(<p key={this.state.userGames[i]}>{this.state.userGames[i].name}</p>);
+          var id = this.state.userGames[i]._id;
+          games.push(<button key={id} onClick={this.handleClick(id)}>{this.state.userGames[i].name}</button>);
         }
+        games.push(<button onClick={this.handleClick(-1)}>Create New Game</button>)
         return games;
+      }
+      else if (this.state.currentGame && this.props.user) {
+        return (
+          <div className="game-board">
+            <Board game={this.state.currentGame} />
+          </div>
+        );
+      }
+      else if (Auth.isUserAuthenticated() && this.state.createGame) {
+        return (
+          <div className="game-creator">
+            <Creator />
+          </div>
+        )
       }
       else {
         return (
-          <div className="game-board">
-            <Board />
-          </div>
+          <p>Log in!</p>
           
         );
       }
@@ -268,7 +439,8 @@ class App extends Component {
       loggedIn: false,
       token: null,
       user: null,
-      username: null
+      username: null,
+      clearboard: false
     }
     this.refresh = this.refresh.bind(this);
     this.login = this.login.bind(this);
@@ -304,7 +476,8 @@ class App extends Component {
 
   logout = () => {
     Auth.deauthenticateUser();
-    this.setState({user: null});
+    CurrentGame.quitGame();
+    this.setState({user: null, clearboard: true}, function () {this.forceUpdate});
   }
 
   render() {
@@ -315,7 +488,7 @@ class App extends Component {
           <Header refresh = {this.refresh} login = {this.login} logout = {this.logout} />
         </div>
         <div className="App">
-          <Game user = {Auth.getUserID()}/>
+          <Game user = {this.state.user} />
         </div>
       </div>
     );
