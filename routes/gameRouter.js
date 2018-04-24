@@ -109,16 +109,21 @@ gameRouter.route('/:gameId/categories')
 	Games.findById(req.params.gameId)
 	.then((game) => {
 		if (game != null) {
-			Categories.findById(req.body._id)
-			.then((category) => {
-				game.categories.push(category);
-				game.save()
-				.then((game) => {
-					res.statusCode = 200;
-					res.setHeader('Content-Type', 'application/json');
-					res.json(game);
-				}, (err) => next(err));
-			});
+			
+				for (var i = 0; i < req.body._id.length; i++) {
+					Categories.findById(req.body._id[i])
+					.then((category) => {
+						game.categories.push(category);						
+						game.save()
+						.then((game) => {
+							res.statusCode = 200;
+							res.setHeader('Content-Type', 'application/json');
+							res.json(game);
+						}, (err) => next(err));
+					})					
+				}
+				
+			
 		}
 		else {
 			err = new Error('Game ' + req.params.gameId + ' not found');
