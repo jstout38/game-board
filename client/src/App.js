@@ -179,59 +179,7 @@ class Creator extends React.Component {
     }
   }
 
-  attachCategories() {
-    console.log(this.state.cats_to_push);
-    for(var k = 0; k < 6; k++) {
-    fetch('api/games/' + this.state.gameID + '/categories', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + Auth.getToken()
-        },
-        body: JSON.stringify({
-            "_id": this.state.cats_to_push[k]
-        })
-    })
-  }
-  }
-
-  createCategories() {
-    for (var i = 0; i < 6; i++) {
-      var cat_data = this.state.finished_cats[i];
-      fetch('api/categories', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + Auth.getToken()
-        },
-        body: JSON.stringify({
-          "name": cat_data.name
-        })
-      })
-      .then(res => res.json())
-      .then(res => {
-        var _id = res._id;
-        this.state.cats_to_push.push(_id);
-        for (var j = 0; j < 5; j++) {
-          fetch('api/categories/' + _id + '/questions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + Auth.getToken()
-            },
-            body: JSON.stringify({
-              "question": cat_data.questions[j],
-              "value": ((j + 1) * 100)
-            })
-          })
-        }
-        
-
-      })        
-    }
-  }
-
-  createGame = event => {
+    createGame = event => {
     event.preventDefault();
     fetch('api/games', {
       method: 'POST',
@@ -375,6 +323,10 @@ class Header extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     this.props.login(this.state.username, this.state.password);
+    this.setState({
+      username: "",
+      password: ""
+    })
   }
 
   handleLogout = event => {
@@ -385,7 +337,9 @@ class Header extends React.Component {
   render() {
     if (!Auth.isUserAuthenticated()) {
       return (
+
         <form onSubmit={this.handleSubmit}>
+          <Button className="button" onClick={this.props.loadRegistration}>Register</Button>
           <Button className="button" type="submit">Submit</Button>
           <FormGroup className="formgroup" controlId="password" >
             <FormControl type="password" className="formcontrol" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
@@ -393,6 +347,7 @@ class Header extends React.Component {
           <FormGroup controlId="username" className="formgroup">
             <FormControl className="formcontrol" value = {this.state.username} onChange={this.handleChange} type="text" placeholder="Enter User Name"/>
           </FormGroup>
+
         </form>
       ) 
     }
@@ -411,13 +366,19 @@ class Game extends React.Component {
     this.state={
       currentGame: null,
       userGames: [],
-      createGame: false
+      createGame: false,
+      username: "",
+      password: "",
+      confirm: ""
     } 
     this.handleClick = this.handleClick.bind(this);   
     this.handleCreate = this.handleCreate.bind(this);
   }
 
   componentWillReceiveProps() {    
+    if(this.props.clearboard) {
+      this.setState({currentGame: null});
+    }
     if (Auth.isUserAuthenticated()) {
       fetch('api/users/' + Auth.getUserID())
         .then(res => res.json())
@@ -450,9 +411,44 @@ class Game extends React.Component {
     this.setState({createGame: true});
   }
 
+  handleSubmit = event => {
+    event.preventDefault();
+    this.props.register(this.state.username, this.state.password);
+    this.setState({
+      username: "",
+      password: "",
+      confirm: ""
+    })
+  }
+
+  handleChange = event => {
+    this.setState({
+      [event.target.id]: event.target.value
+    })
+  }
+
   render() {
 
-      if (Auth.isUserAuthenticated() && !this.state.currentGame && !this.state.createGame) {
+      if (this.props.registering) {
+        return (
+          <form onSubmit={this.handleSubmit}>
+          
+          
+          <FormGroup controlId="username" className="registration-formgroup">
+            <FormControl className="formcontrol" value = {this.state.username} onChange={this.handleChange} type="text" placeholder="Enter User Name"/>
+          </FormGroup>
+          <FormGroup className="registration-formgroup" controlId="password" >
+            <FormControl type="password" className="formcontrol" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
+          </FormGroup>
+          <FormGroup className="registration-formgroup" controlId = "confirm">
+            <FormControl type="password" className = "formcontrol" value = {this.state.confirm} onChange={this.handleChange} placeholder = "Confirm Password" />
+          </FormGroup>
+          <Button className="button" className="registration-formgroup" type="submit">Submit</Button>
+
+        </form>
+        )
+      }
+      else if (Auth.isUserAuthenticated() && !this.state.currentGame && !this.state.createGame && this.props.clearboard) {
         var games = [];
         for (var i = 0; i < this.state.userGames.length; i++) {
           var id = this.state.userGames[i]._id;
@@ -500,11 +496,13 @@ class App extends Component {
       token: null,
       user: null,
       username: null,
-      clearboard: false
+      clearboard: false,
+      registering: false
     }
     this.refresh = this.refresh.bind(this);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.register = this.register.bind(this);
     if (Auth.isUserAuthenticated()) {
       this.state.user = Auth.getUserID();
     }
@@ -512,6 +510,33 @@ class App extends Component {
 
   refresh = () => {
     this.forceUpdate();
+  }
+
+  loadRegistration = () => {
+    this.setState({registering: true});
+  }
+
+  register = (username, password) => {
+    fetch('api/users/signup', {
+      method: 'post',
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify({
+        "username": username,
+        "password": password
+      })
+    })
+    .then(res => res.json())
+    .then(res => {
+      if (res.success) {
+        this.login(username, password);
+        this.setState({registering: false})
+      }
+      else {
+
+      }
+    })
   }
 
   login = (username, password) => {
@@ -529,8 +554,13 @@ class App extends Component {
       })
       .then(res => res.json())
       .then(res => {
-        Auth.authenticateUser(res.token, res.username, res.userID);
-        this.setState({user: res.userID});
+        if (res.success) {
+          Auth.authenticateUser(res.token, res.username, res.userID);
+          this.setState({user: res.userID});
+        }
+        else{
+
+        }
       })      
   }
 
@@ -545,10 +575,10 @@ class App extends Component {
     return (
       <div>
         <div className="game-header">
-          <Header refresh = {this.refresh} login = {this.login} logout = {this.logout} />
+          <Header refresh = {this.refresh} login = {this.login} logout = {this.logout} loadRegistration = {this.loadRegistration} />
         </div>
         <div className="App">
-          <Game user = {this.state.user} />
+          <Game user = {this.state.user} clearboard = {this.state.clearboard} registering = {this.state.registering} register = {this.register} />
         </div>
       </div>
     );

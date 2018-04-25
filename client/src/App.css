@@ -78,3 +78,15 @@
   float: right;
   margin: 10px;
 }
+
+.registration-formgroup {
+  width: 25%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.formgroup2 {
+  width: 25%;
+  margin-left: auto;
+  margin-right: auto;
+}
