@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
-import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import { FormGroup, FormControl, HelpBlock, ControlLabel, Button } from 'react-bootstrap';
 import Auth from './Auth';
 import CurrentGame from './CurrentGame';
 
@@ -20,7 +20,7 @@ class Square extends React.Component {
 class CategorySquare extends React.Component {
     render() {
       return (
-        <button className="square">
+        <button className="cat-square" onClick={() => this.props.onClick()}>
           {this.props.value}
         </button>
       );
@@ -30,8 +30,8 @@ class CategorySquare extends React.Component {
 class Question extends React.Component {
   render() {
     return (
-      <div>
-        <p>{this.props.question}</p>
+      <div className="question">
+        <p class="questionText">{this.props.question}</p>
         <button onClick={() => this.props.onClick()}>Return</button>
       </div>
       );
@@ -85,14 +85,14 @@ class Board extends React.Component {
     else {
       
     return(
-      <Square value={i.value} onClick={() => this.renderQuestion(i.question, qNo)}/>
+      <Square value={"$" + String(i.value)} onClick={() => this.renderQuestion(i.question, qNo)}/>
     );
     }
   }
 
   renderCategorySquare(i) {
     return (
-      <Square value={i} onClick={() => {}}/>
+      <CategorySquare value={i} onClick={() => {}}/>
     );
   }
 
@@ -354,7 +354,7 @@ class Header extends React.Component {
     else {
       return (
         <span>Logged In as {Auth.getUserName()}
-        <button onClick={this.handleLogout}>Log Out</button></span>
+        <button class="btn btn-warning" onClick={this.handleLogout}>Log Out</button></span>
       )
     }
   }
@@ -427,6 +427,23 @@ class Game extends React.Component {
     })
   }
 
+  validateUserName() {
+    const length = this.state.username.length;
+    if (length > 7) return 'success';
+    else return 'error';
+  }
+
+  validatePassword() {
+    const length = this.state.password.length;
+    if (length > 7) return 'success';
+    else return 'error';
+  }
+
+  confirmPassword() {
+    if (this.state.password === this.state.confirm) return 'success';
+    else return 'error';
+  }
+
   render() {
 
       if (this.props.registering) {
@@ -434,14 +451,20 @@ class Game extends React.Component {
           <form onSubmit={this.handleSubmit}>
           
           
-          <FormGroup controlId="username" className="registration-formgroup">
+          <FormGroup controlId="username" className="registration-formgroup" validationState={this.validateUserName()}>
             <FormControl className="formcontrol" value = {this.state.username} onChange={this.handleChange} type="text" placeholder="Enter User Name"/>
+            <FormControl.Feedback />
+            <HelpBlock>Username must be at least 8 characters.</HelpBlock>
           </FormGroup>
-          <FormGroup className="registration-formgroup" controlId="password" >
+          <FormGroup className="registration-formgroup" controlId="password" validationState = {this.validatePassword()}>
             <FormControl type="password" className="formcontrol" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
+            <FormControl.Feedback />
+            <HelpBlock>Password must be at least 8 characters.</HelpBlock>
           </FormGroup>
-          <FormGroup className="registration-formgroup" controlId = "confirm">
+          <FormGroup className="registration-formgroup" controlId = "confirm" validationState = {this.confirmPassword()}>
             <FormControl type="password" className = "formcontrol" value = {this.state.confirm} onChange={this.handleChange} placeholder = "Confirm Password" />
+            <FormControl.Feedback />
+            <HelpBlock>Passwords must match.</HelpBlock>
           </FormGroup>
           <Button className="button" className="registration-formgroup" type="submit">Submit</Button>
 
@@ -452,9 +475,9 @@ class Game extends React.Component {
         var games = [];
         for (var i = 0; i < this.state.userGames.length; i++) {
           var id = this.state.userGames[i]._id;
-          games.push(<button key={id} onClick={this.handleClick(id)}>{this.state.userGames[i].name}</button>);
+          games.push(<button class="btn btn-primary" key={id} onClick={this.handleClick(id)}>{this.state.userGames[i].name}</button>);
         }
-        games.push(<button onClick={this.handleClick(-1)}>Create New Game</button>)
+        games.push(<button class="btn btn-success" onClick={this.handleClick(-1)}>Create New Game</button>)
         return games;
       }
       else if (this.state.currentGame && this.props.user) {
@@ -496,7 +519,7 @@ class App extends Component {
       token: null,
       user: null,
       username: null,
-      clearboard: false,
+      clearboard: true,
       registering: false
     }
     this.refresh = this.refresh.bind(this);
@@ -556,7 +579,7 @@ class App extends Component {
       .then(res => {
         if (res.success) {
           Auth.authenticateUser(res.token, res.username, res.userID);
-          this.setState({user: res.userID});
+          this.setState({user: res.userID, registering: false});
         }
         else{
 
