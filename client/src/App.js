@@ -305,6 +305,23 @@ class Creator extends React.Component {
 
 }
 
+class ControlPanel extends React.Component {
+  constructor(props) {
+    
+      super(props);
+      this.state = {
+
+      }
+    
+  }
+
+  render() {
+    return (
+      <button class="btn btn-danger return" onClick = {this.props.closeGame}>Close Game</button>
+    )
+  }
+}
+
 class Header extends React.Component {
   constructor(props) {
     super(props);
@@ -373,9 +390,10 @@ class Game extends React.Component {
     } 
     this.handleClick = this.handleClick.bind(this);   
     this.handleCreate = this.handleCreate.bind(this);
+    this.closeGame = this.closeGame.bind(this);
   }
 
-  componentWillReceiveProps() {    
+  componentDidMount() {
     if(this.props.clearboard) {
       this.setState({currentGame: null});
     }
@@ -394,6 +412,10 @@ class Game extends React.Component {
         createGame: false
       })
     }    
+  }
+
+  componentWillReceiveProps() {    
+    this.componentDidMount();    
   } 
 
   handleClick = (gameID) => (e) => {
@@ -444,6 +466,10 @@ class Game extends React.Component {
     else return 'error';
   }
 
+  closeGame = () => {
+    this.setState({currentGame: null});
+  }
+
   render() {
 
       if (this.props.registering) {
@@ -482,8 +508,13 @@ class Game extends React.Component {
       }
       else if (this.state.currentGame && this.props.user) {
         return (
+          <div className="board-container">
           <div className="game-board">
             <Board game={this.state.currentGame} />
+          </div>
+          <div className="control-panel">
+            <ControlPanel closeGame = {this.closeGame}/>
+          </div>
           </div>
         );
       }
