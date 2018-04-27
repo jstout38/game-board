@@ -17,7 +17,10 @@ class Board extends React.Component {
   }
 
   componentWillReceiveProps() {
-    console.log(this.props.game);
+    if(this.props.newgame) {
+      var complete = Array(30).fill(false);
+      this.setState({completed: complete});
+    }
     fetch('api/games/' + CurrentGame.getGame())
       .then(res => res.json())
       .then(game => {this.setState({ game: game, questionMode: false }); CurrentGame.setGameData(game)});

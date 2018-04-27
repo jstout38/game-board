@@ -16,7 +16,8 @@ class Game extends React.Component {
       username: "",
       password: "",
       confirm: "",
-      checkboxes: {}
+      checkboxes: {},
+      newGame: false
     } 
     this.handleClick = this.handleClick.bind(this);   
     this.handleCreate = this.handleCreate.bind(this);
@@ -134,6 +135,10 @@ class Game extends React.Component {
     this.setState({currentGame: null});
   }
 
+  reload = () => {
+    this.setState({newGame: true});
+  }
+
   render() {
 
       if (this.props.registering) {
@@ -190,10 +195,10 @@ class Game extends React.Component {
         return (
           <div className="board-container">
           <div className="game-board">
-            <Board game={this.state.currentGame} />
+            <Board game={this.state.currentGame} newgame={this.state.newGame}/>
           </div>
           <div className="control-panel">
-            <ControlPanel closeGame = {this.closeGame}/>
+            <ControlPanel closeGame = {this.closeGame} reload = {this.reload}/>
           </div>
           </div>
         );
