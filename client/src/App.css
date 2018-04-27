@@ -166,3 +166,12 @@
 
 }
 
+.game-button {
+  margin-bottom: 20px;
+  float: left;
+}
+
+.logout-button {
+  margin-left: 20px;
+}
+

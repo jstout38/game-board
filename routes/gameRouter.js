@@ -41,7 +41,7 @@ gameRouter.route('/')
 	res.end('PUT operation not supported on /games');
 })
 .delete(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
-	Games.remove({})
+	Games.deleteMany({_id: {$in: req.body._ids}})
 	.then((resp) => {
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'application/json');
@@ -105,6 +105,7 @@ gameRouter.route('/:gameId/categories')
 	}, (err) => next(err))
 	.catch((err) => next(err));
 })
+//TO DO Change this to a many function
 .post(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	Games.findById(req.params.gameId)
 	.then((game) => {

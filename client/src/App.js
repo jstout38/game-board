@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
-import { FormGroup, FormControl, HelpBlock, ControlLabel, Button } from 'react-bootstrap';
+import { FormGroup, FormControl, HelpBlock, ControlLabel, Button, Row, Col } from 'react-bootstrap';
 import Auth from './Auth';
 import CurrentGame from './CurrentGame';
 
@@ -219,13 +219,13 @@ class Creator extends React.Component {
     event.preventDefault();
     var category = {
       "name": this.state.category_title,
-      "questions": [
-        this.state.q1,
-        this.state.q2,
-        this.state.q3,
-        this.state.q4,
-        this.state.q5
-      ]
+      "questions": {
+        "100": this.state.q1,
+        "200": this.state.q2,
+        "300": this.state.q3,
+        "400": this.state.q4,
+        "500": this.state.q5
+      }
     }
     fetch('api/categories', {
         method: 'POST',
@@ -249,7 +249,7 @@ class Creator extends React.Component {
               'Authorization': 'Bearer ' + Auth.getToken()
             },
             body: JSON.stringify({
-              "question": category.questions[j],
+              "question": category.questions[String((j+1) * 100)],
               "value": ((j + 1) * 100)
             })
           })
@@ -371,7 +371,7 @@ class Header extends React.Component {
     else {
       return (
         <span>Logged In as {Auth.getUserName()}
-        <button class="btn btn-warning" onClick={this.handleLogout}>Log Out</button></span>
+        <button class="btn btn-warning logout-button" onClick={this.handleLogout}>Log Out</button></span>
       )
     }
   }
@@ -386,11 +386,14 @@ class Game extends React.Component {
       createGame: false,
       username: "",
       password: "",
-      confirm: ""
+      confirm: "",
+      checkboxes: {}
     } 
     this.handleClick = this.handleClick.bind(this);   
     this.handleCreate = this.handleCreate.bind(this);
     this.closeGame = this.closeGame.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.toggle = this.toggle.bind(this);
   }
 
   componentDidMount() {
@@ -403,8 +406,14 @@ class Game extends React.Component {
         .then(games => { 
           this.setState({ 
             userGames: games,
-            createGame: false
+            createGame: false,
+            checkboxes: {}
           });
+          var newCheckboxes = {};
+          for (var i = 0; i < games.length; i++) {
+            newCheckboxes[String(games[i]._id)] = false;
+          }
+          this.setState({checkboxes: newCheckboxes});
         });
     } 
     else {
@@ -428,6 +437,12 @@ class Game extends React.Component {
     }
   }
 
+  toggle = (id) => (e) => {
+    var tempBoxes = this.state.checkboxes;
+    tempBoxes[id] = !tempBoxes[id];
+    this.setState({checkboxes: tempBoxes});
+  }
+
   handleCreate = () => (e) => {
     e.preventDefault();
     this.setState({createGame: true});
@@ -447,6 +462,26 @@ class Game extends React.Component {
     this.setState({
       [event.target.id]: event.target.value
     })
+  }
+
+  handleDelete = event => {
+    var gamesToDelete = [];
+    for (var key in this.state.checkboxes) {
+      if (this.state.checkboxes[key]) {
+        gamesToDelete.push(key);
+      }
+    }    
+      fetch('api/games', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer  ' + Auth.getToken()
+        },
+        body: JSON.stringify({
+          "_ids": gamesToDelete
+        })
+    })
+    .then(res => (this.componentDidMount()));
   }
 
   validateUserName() {
@@ -501,9 +536,25 @@ class Game extends React.Component {
         var games = [];
         for (var i = 0; i < this.state.userGames.length; i++) {
           var id = this.state.userGames[i]._id;
-          games.push(<button class="btn btn-primary" key={id} onClick={this.handleClick(id)}>{this.state.userGames[i].name}</button>);
+          
+          games.push(<Row>
+                      <Col sm={1}>
+                        <input type="checkbox" checked = {this.state.checkboxes[id]} onClick={this.toggle(String(id))} />
+                      </Col>
+                      <Col sm={4}>
+                        <button class="btn btn-primary btn-block game-button" key={id} onClick={this.handleClick(id)}>{this.state.userGames[i].name}</button>
+                      </Col>
+                    </Row>);
         }
-        games.push(<button class="btn btn-success" onClick={this.handleClick(-1)}>Create New Game</button>)
+        games.push(<Row>
+          <Col sm={2} smOffset={1}>
+            <button class="btn btn-success" onClick={this.handleClick(-1)}>Create New Game</button>
+          </Col>
+          <Col sm={2}>
+            <button class="btn btn-danger" onClick={this.handleDelete.bind(this)}>Delete Games</button>
+          </Col>
+          </Row>);
+
         return games;
       }
       else if (this.state.currentGame && this.props.user) {
