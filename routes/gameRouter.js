@@ -107,6 +107,21 @@ gameRouter.route('/:gameId/categories')
 })
 //TO DO Change this to a many function
 .post(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
+	var game = Games.findById(req.params.gameId);
+	var cats = game.then(function(game) {
+		return Categories.find( { _id: { $in: req.body._ids }}).exec();
+	});
+	Promise.all([game, cats]).then(function([game, cats]) {
+		console.log(game);
+		console.log(cats);
+		for (var i = 0; i < cats.length; i++) {
+			game.categories.push(cats[i]);
+		}
+		game.save();
+	});
+	
+	
+	/*
 	Games.findById(req.params.gameId)
 	.then((game) => {
 		if (game != null) {
@@ -132,7 +147,7 @@ gameRouter.route('/:gameId/categories')
 			return next(err);
 		}
 	}, (err) => next(err))
-	.catch((err) => next(err));
+	.catch((err) => next(err));*/
 })
 .put(cors.corsWithOptions, authenticate.verifyUser, (req,res,next) => {
 	res.statusCode = 403;

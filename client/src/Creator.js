@@ -2,6 +2,49 @@ import React, { Component } from 'react';
 import { FormGroup, FormControl, HelpBlock, ControlLabel, Button, Row, Col } from 'react-bootstrap';
 import Auth from './Auth';
 
+class PreviewGame extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+
+  createTable = (game) => {
+    var table = [];
+    var categories = [];
+    for(var i=0; i < 6; i++) {
+      if (game[i]) {
+        categories.push(<td>{game[i].name}</td>)
+      }
+      else {
+        categories.push(<td></td>)
+      }
+    }
+    table.push(<tr>{categories}</tr>)
+    for (var i = 100; i < 600; i = i + 100) {
+      var questions = [];
+      for (var j = 0; j < 6; j++) {
+        if (game[j]) {
+          questions.push(<td>{game[j].questions[String(i)]}</td>);
+        }
+        else {
+          questions.push(<td></td>);
+        }        
+      }
+      table.push(<tr className="preview-row">{questions}</tr>)
+    }
+    return table;
+  }
+
+  render () {
+    return(
+      <table className="preview-game">
+        {this.createTable(this.props.game)}
+      </table>
+    )
+  }
+}
+
 class Creator extends React.Component {
   constructor(props) {
     super(props);
@@ -15,7 +58,8 @@ class Creator extends React.Component {
       q5: "",
       gameID: null,
       gameName: "",
-      cats_to_push: []
+      cats_to_push: [],
+      preview_game: []
     }
   }
 
@@ -42,7 +86,7 @@ class Creator extends React.Component {
             'Authorization': 'Bearer ' + Auth.getToken()
           },
           body: JSON.stringify({
-            "_id": this.state.cats_to_push          
+            "_ids": this.state.cats_to_push          
           })
         })
       
@@ -67,6 +111,9 @@ class Creator extends React.Component {
         "500": this.state.q5
       }
     }
+    var pg = this.state.preview_game;
+    pg.push(category);
+    this.setState({preview_game: pg});
     fetch('api/categories', {
         method: 'POST',
         headers: {
@@ -110,34 +157,47 @@ class Creator extends React.Component {
   render() {
     return(
       <div>
-      <form onSubmit={this.handleSubmit}>
-        <FormGroup className="formgroup2" controlId="category_title">
-          <FormControl className="formcontrol" type="text" value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
-        </FormGroup>
-        <FormGroup className="formgroup2" controlId="q1">
-          <FormControl className="formcontrol" type="text" value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
-        </FormGroup>
-        <FormGroup className="formgroup2" controlId="q2">
-          <FormControl className="formcontrol" type="text" value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
-        </FormGroup>
-        <FormGroup className="formgroup2" controlId="q3">
-          <FormControl className="formcontrol" type="text" value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
-        </FormGroup>
-        <FormGroup className="formgroup2" controlId="q4">
-          <FormControl className="formcontrol" type="text" value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
-        </FormGroup>
-        <FormGroup className="formgroup2" controlId="q5">
-          <FormControl className="formcontrol" type="text" value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
-        </FormGroup>
-        <Button className="button" type="submit">Submit</Button>
-      </form>
-      <p>{this.state.finished_cats.length}</p>
+      <Row>
       <form onSubmit={this.createGame}>
-      <FormGroup className="formgroup2" controlId="gameName">
+      <FormGroup className="game-name" controlId="gameName">
         <FormControl className="formcontrol" type="text" value = {this.state.gameName} onChange={this.handleChange} placeholder = "Game Name" />
       </FormGroup>
-      <Button className="button" type="submit">Create Game</Button> 
+      <Button className="button game-create-button" type="submit">Create Game</Button> 
+      
+    </form>
+      </Row>
+      <Row>
+        <Col sm={4}>
+      <form className="category-form" onSubmit={this.handleSubmit}>
+        
+        <FormGroup className="formgroup2" controlId="category_title">
+          <FormControl className="formcontrol category-input" type="text" value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q1">
+          <FormControl className="formcontrol question-input" type="text" value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q2">
+          <FormControl className="formcontrol question-input" type="text" value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q3">
+          <FormControl className="formcontrol question-input" type="text" value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q4">
+          <FormControl className="formcontrol question-input" type="text" value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
+        </FormGroup>
+        <FormGroup className="formgroup2" controlId="q5">
+          <FormControl className="formcontrol question-input" type="text" value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
+        </FormGroup>
+        <Button className="button" type="submit">Submit</Button>
+
       </form>
+      <p>{this.state.finished_cats.length}</p>
+      
+    </Col>
+    <Col sm={8}>
+    <PreviewGame game={this.state.preview_game}/>
+    </Col>
+      </Row>
       </div>
 
     )
