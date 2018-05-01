@@ -117,8 +117,14 @@ gameRouter.route('/:gameId/categories')
 		for (var i = 0; i < cats.length; i++) {
 			game.categories.push(cats[i]);
 		}
-		game.save();
-	});
+		game.save()
+		.then((game) => {
+			res.statusCode = 200;
+			res.setHeader('Content-Type', 'application/json');
+			res.json(game);
+		}, (err) => next(err));
+	}, (err) => next(err))
+	.catch((err) => next(err));
 	
 	
 	/*

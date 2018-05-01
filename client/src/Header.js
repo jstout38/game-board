@@ -1,6 +1,6 @@
 import React from 'react';
 import Auth from './Auth';
-import { FormGroup, FormControl, HelpBlock, ControlLabel, Button, Row, Col } from 'react-bootstrap';
+import { Form, FormGroup, FormControl, HelpBlock, ControlLabel, Button, Row, Col } from 'react-bootstrap';
 
 class Header extends React.Component {
   constructor(props) {
@@ -35,17 +35,21 @@ class Header extends React.Component {
     if (!Auth.isUserAuthenticated()) {
       return (
 
-        <form onSubmit={this.handleSubmit}>
-          <Button className="button" onClick={this.props.loadRegistration}>Register</Button>
-          <Button className="button" type="submit">Submit</Button>
-          <FormGroup className="formgroup" controlId="password" >
-            <FormControl type="password" className="formcontrol" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
-          </FormGroup>
+        <Form inline className="login-form" onSubmit={this.handleSubmit}>
+          
           <FormGroup controlId="username" className="formgroup">
             <FormControl className="formcontrol" value = {this.state.username} onChange={this.handleChange} type="text" placeholder="Enter User Name"/>
           </FormGroup>
-
-        </form>
+          
+          
+          <FormGroup className="formgroup" controlId="password" >
+            <FormControl type="password" className="formcontrol" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
+          </FormGroup>
+          
+          <button className="btn btn-success login-button" type="submit">Submit</button>
+          <button className="btn btn-info register-button" onClick={this.props.loadRegistration}>Register</button>
+          
+        </Form>
       ) 
     }
     else {
