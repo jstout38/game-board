@@ -16,8 +16,8 @@ class Board extends React.Component {
     }
   }
 
-  componentWillReceiveProps() {
-    if(this.props.newgame) {
+  componentWillReceiveProps(newProps) {
+    if(newProps.newgame) {
       var complete = Array(30).fill(false);
       this.setState({completed: complete});
     }

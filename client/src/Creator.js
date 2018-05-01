@@ -39,7 +39,9 @@ class PreviewGame extends React.Component {
   render () {
     return(
       <table className="preview-game">
+        <tbody>
         {this.createTable(this.props.game)}
+        </tbody>
       </table>
     )
   }
@@ -171,27 +173,26 @@ class Creator extends React.Component {
       <form className="category-form" onSubmit={this.handleSubmit}>
         
         <FormGroup className="formgroup2" controlId="category_title">
-          <FormControl className="formcontrol category-input" type="text" value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
+          <FormControl className="formcontrol category-input" type="textarea" value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q1">
-          <FormControl className="formcontrol question-input" type="text" value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q2">
-          <FormControl className="formcontrol question-input" type="text" value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q3">
-          <FormControl className="formcontrol question-input" type="text" value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q4">
-          <FormControl className="formcontrol question-input" type="text" value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q5">
-          <FormControl className="formcontrol question-input" type="text" value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
         </FormGroup>
         <Button className="button" type="submit">Submit</Button>
 
       </form>
-      <p>{this.state.finished_cats.length}</p>
       
     </Col>
     <Col sm={8}>
