@@ -17,7 +17,8 @@ class Game extends React.Component {
       password: "",
       confirm: "",
       checkboxes: {},
-      newGame: false
+      newGame: false,
+      readyToSubmit: false
     } 
     this.handleClick = this.handleClick.bind(this);   
     this.handleCreate = this.handleCreate.bind(this);
@@ -116,18 +117,22 @@ class Game extends React.Component {
 
   validateUserName() {
     const length = this.state.username.length;
-    if (length > 7) return 'success';
+    if (length > 7) return 'success'
+    else if (length === 0) return null
     else return 'error';
   }
 
   validatePassword() {
     const length = this.state.password.length;
-    if (length > 7) return 'success';
+    if (length > 7) return 'success'
+    else if (length === 0) return null
     else return 'error';
   }
 
   confirmPassword() {
-    if (this.state.password === this.state.confirm) return 'success';
+    const length = this.state.confirm.length
+    if (this.state.password === this.state.confirm && length > 7) return 'success'
+    else if (length === 0) return null
     else return 'error';
   }
 
@@ -149,19 +154,19 @@ class Game extends React.Component {
           <FormGroup controlId="username" className="registration-formgroup" validationState={this.validateUserName()}>
             <FormControl className="formcontrol" value = {this.state.username} onChange={this.handleChange} type="text" placeholder="Enter User Name"/>
             <FormControl.Feedback />
-            <HelpBlock>Username must be at least 8 characters.</HelpBlock>
+            <HelpBlock className="help">Username must be at least 8 characters.</HelpBlock>
           </FormGroup>
           <FormGroup className="registration-formgroup" controlId="password" validationState = {this.validatePassword()}>
             <FormControl type="password" className="formcontrol" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
             <FormControl.Feedback />
-            <HelpBlock>Password must be at least 8 characters.</HelpBlock>
+            <HelpBlock className="help">Password must be at least 8 characters.</HelpBlock>
           </FormGroup>
           <FormGroup className="registration-formgroup" controlId = "confirm" validationState = {this.confirmPassword()}>
             <FormControl type="password" className = "formcontrol" value = {this.state.confirm} onChange={this.handleChange} placeholder = "Confirm Password" />
             <FormControl.Feedback />
-            <HelpBlock>Passwords must match.</HelpBlock>
+            <HelpBlock className="help">Passwords must match.</HelpBlock>
           </FormGroup>
-          <Button className="button" className="registration-formgroup" type="submit">Submit</Button>
+          <Button className="button" disabled={this.validateUserName() !== 'success' || this.validatePassword() !== 'success' || this.confirmPassword() !== 'success'} className="registration-formgroup" type="submit">Submit</Button>
 
         </form>
         )

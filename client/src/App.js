@@ -52,10 +52,15 @@ class App extends Component {
     .then(res => {
       if (res.success) {
         this.login(username, password);
-        this.setState({registering: false})
+        this.setState({registering: false});
       }
       else {
-
+        if (res.err.name = "UserExistsError") {
+          alert("Username already exists, try again!");
+        }
+        else {
+          alert("Error! Try again!");
+        }
       }
     })
   }
