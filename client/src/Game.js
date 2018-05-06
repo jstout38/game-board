@@ -144,6 +144,15 @@ class Game extends React.Component {
     this.setState({newGame: true});
   }
 
+  closed = () => {
+    this.setState({createGame: false});
+  }
+
+  created = () => {
+    this.setState({createGame: false});
+    this.componentDidMount();
+  }
+
   render() {
 
       if (this.props.registering) {
@@ -211,7 +220,7 @@ class Game extends React.Component {
       else if (Auth.isUserAuthenticated() && this.state.createGame) {
         return (
           <div className="game-creator">
-            <Creator />
+            <Creator created={this.created} closed={this.closed}/>
           </div>
         )
       }

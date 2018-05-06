@@ -91,8 +91,9 @@ class Creator extends React.Component {
             "_ids": this.state.cats_to_push          
           })
         })
+
       
-    })
+    }).then(res => {this.props.created()});
   }
 
   handleChange = event => {
@@ -178,11 +179,13 @@ class Creator extends React.Component {
     return(
       <div>
       <Row>
+      <Button className="button btn-danger close-button" onClick={this.props.closed}>Cancel</Button>
       <form onSubmit={this.createGame}>
       <FormGroup className="game-name" controlId="gameName">
         <FormControl className="formcontrol" type="text" value = {this.state.gameName} onChange={this.handleChange} placeholder = "Game Name" />
       </FormGroup>
       <Button className="button game-create-button" disabled={!this.gameComplete()} type="submit">Create Game</Button> 
+
       
     </form>
       </Row>

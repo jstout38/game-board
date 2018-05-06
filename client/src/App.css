@@ -1,10 +1,12 @@
 body {
   background: linear-gradient(tan, white);
   height: 100%;
+  width: 100%;
 }
 
 html {
   height: 100%;
+  width: 100%;
 }
 
 .App {
@@ -241,4 +243,9 @@ td {
 
 .formgroup, .login-button, .register-button {
   margin-right: 10px;
+}
+
+.close-button {
+  float: right;
+  margin-right: 20px;
 }
