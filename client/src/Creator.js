@@ -9,12 +9,45 @@ class PreviewGame extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    this.setHover();
+
+  }
+
+  setHover() {
+    var classes = ["catCol-1", "catCol-2", "catCol-3", "catCol-4", "catCol-5", "catCol-6"]; //list of your classes
+    var elms = {};
+    var n = {}, nclasses = classes.length;
+    function changeColor(classname, color, bgcolor) {
+      var curN = n[classname];
+      for(var i = 0; i < curN; i ++) {
+        elms[classname][i].style.backgroundColor = bgcolor;
+        elms[classname][i].style.color = color;
+      }
+    }
+    for(var k = 0; k < nclasses; k ++) {
+      var curClass = classes[k];
+      elms[curClass] = document.getElementsByClassName(curClass);
+      n[curClass] = elms[curClass].length;
+      var curN = n[curClass];
+      for(var i = 0; i < curN; i ++) {
+        elms[curClass][i].onmouseover = function() {
+            changeColor(this.className, "black", "yellow");
+        };
+        elms[curClass][i].onmouseout = function() {
+            changeColor(this.className, "white", "blue");
+        };
+      }
+    };
+  }
+
   createTable = (game) => {
     var table = [];
     var categories = [];
     for(var i=0; i < 6; i++) {
       if (game[i]) {
-        categories.push(<td>{game[i].name}</td>)
+        var class_name = "catCol-" + (i + 1);
+        categories.push(<td className={class_name}>{game[i].name}</td>)
       }
       else {
         categories.push(<td></td>)
@@ -24,8 +57,10 @@ class PreviewGame extends React.Component {
     for (var i = 100; i < 600; i = i + 100) {
       var questions = [];
       for (var j = 0; j < 6; j++) {
+        var class_name = "catCol-" + (j + 1);
+
         if (game[j]) {
-          questions.push(<td>{game[j].questions[String(i)]}</td>);
+          questions.push(<td className={class_name}>{game[j].questions[String(i)]}</td>);
         }
         else {
           questions.push(<td></td>);
@@ -37,6 +72,7 @@ class PreviewGame extends React.Component {
   }
 
   render () {
+
     return(
       <table className="preview-game">
         <tbody>

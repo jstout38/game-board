@@ -249,3 +249,33 @@ td {
   float: right;
   margin-right: 20px;
 }
+
+.catCol-1:hover {
+  background-color: yellow;
+  color: black;
+} 
+
+.catCol-2:hover {
+  background-color: yellow;
+  color: black;
+} 
+
+.catCol-3:hover {
+  background-color: yellow;
+  color: black;
+} 
+
+.catCol-4:hover {
+  background-color: yellow;
+  color: black;
+} 
+
+.catCol-5:hover {
+  background-color: yellow;
+  color: black;
+} 
+
+.catCol-6:hover {
+  background-color: yellow;
+  color: black;
+} 
