@@ -59,10 +59,17 @@ class Board extends React.Component {
     }
   }
 
-  renderCategorySquare(i) {
-    return (
-      <CategorySquare value={i} onClick={() => {}}/>
-    );
+  renderCategorySquare(i, catNo) {
+    if (this.state.completed[catNo] && this.state.completed[catNo + 6] && this.state.completed[catNo + 12] && this.state.completed[catNo + 18] && this.state.completed[catNo + 24]) {
+      return (
+        <CategorySquare value={<span className="placeholder">blank</span>} onClick={() => {}}/>
+      )
+    }
+    else {
+      return (
+        <CategorySquare value={i} onClick={() => {}}/>
+      );
+    }
   }
 
 
@@ -72,12 +79,12 @@ class Board extends React.Component {
     return (
       <div>
         <div className="board-row">
-          {this.renderCategorySquare(this.state.game.categories[0].name)}
-          {this.renderCategorySquare(this.state.game.categories[1].name)}
-          {this.renderCategorySquare(this.state.game.categories[2].name)}
-          {this.renderCategorySquare(this.state.game.categories[3].name)}
-          {this.renderCategorySquare(this.state.game.categories[4].name)}
-          {this.renderCategorySquare(this.state.game.categories[5].name)}
+          {this.renderCategorySquare(this.state.game.categories[0].name, 1)}
+          {this.renderCategorySquare(this.state.game.categories[1].name, 2)}
+          {this.renderCategorySquare(this.state.game.categories[2].name, 3)}
+          {this.renderCategorySquare(this.state.game.categories[3].name, 4)}
+          {this.renderCategorySquare(this.state.game.categories[4].name, 5)}
+          {this.renderCategorySquare(this.state.game.categories[5].name, 6)}
         </div>
         <div className="board-row">
           {this.renderSquare(this.state.game.categories[0].questions.filter(function(data){return data.value == 100})[0], 1)}
