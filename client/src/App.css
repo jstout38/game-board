@@ -224,8 +224,13 @@ html {
 }
 
 .preview-row {
-  height: 15vh;
+  height: 13vh;
   border: 1px solid black;
+}
+
+.preview-category-row {
+  height: 8vh;
+  border: 3px solid black;
 }
 
 td {

@@ -20,7 +20,7 @@ class PreviewGame extends React.Component {
         categories.push(<td></td>)
       }
     }
-    table.push(<tr>{categories}</tr>)
+    table.push(<tr className="preview-category-row">{categories}</tr>)
     for (var i = 100; i < 600; i = i + 100) {
       var questions = [];
       for (var j = 0; j < 6; j++) {
@@ -156,6 +156,24 @@ class Creator extends React.Component {
     })
   }
 
+  gameComplete() {
+    if (this.state.preview_game.length > 5 && this.state.gameName.length > 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  categoryComplete() {
+    if (this.state.category_title.length > 0 && this.state.q1.length > 0 && this.state.q2.length > 0 && this.state.q3.length > 0 && this.state.q4.length > 0 && this.state.q5.length > 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
   render() {
     return(
       <div>
@@ -164,7 +182,7 @@ class Creator extends React.Component {
       <FormGroup className="game-name" controlId="gameName">
         <FormControl className="formcontrol" type="text" value = {this.state.gameName} onChange={this.handleChange} placeholder = "Game Name" />
       </FormGroup>
-      <Button className="button game-create-button" type="submit">Create Game</Button> 
+      <Button className="button game-create-button" disabled={!this.gameComplete()} type="submit">Create Game</Button> 
       
     </form>
       </Row>
@@ -176,21 +194,21 @@ class Creator extends React.Component {
           <FormControl className="formcontrol category-input" type="textarea" value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q1">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q2">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q3">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q4">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q5">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={4} value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
         </FormGroup>
-        <Button className="button" type="submit">Submit</Button>
+        <Button className="button" disabled={!this.categoryComplete()} type="submit">Submit</Button>
 
       </form>
       
