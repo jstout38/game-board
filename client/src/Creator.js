@@ -9,13 +9,17 @@ class PreviewGame extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    this.setHover();
 
+  componentDidUpdate() {
+        this.setHover();
+  }
+
+  handleClick = (cat) => (e) => {
+    this.props.loadCat(cat);
   }
 
   setHover() {
-    var classes = ["catCol-1", "catCol-2", "catCol-3", "catCol-4", "catCol-5", "catCol-6"]; //list of your classes
+    var classes = ["catCol-1", "catCol-2", "catCol-3", "catCol-4", "catCol-5", "catCol-6", "currentCat"]; //list of your classes
     var elms = {};
     var n = {}, nclasses = classes.length;
     function changeColor(classname, color, bgcolor) {
@@ -31,7 +35,8 @@ class PreviewGame extends React.Component {
       n[curClass] = elms[curClass].length;
       var curN = n[curClass];
       for(var i = 0; i < curN; i ++) {
-        elms[curClass][i].onmouseover = function() {
+
+          elms[curClass][i].onmouseover = function() {
             changeColor(this.className, "black", "yellow");
         };
         elms[curClass][i].onmouseout = function() {
@@ -45,9 +50,17 @@ class PreviewGame extends React.Component {
     var table = [];
     var categories = [];
     for(var i=0; i < 6; i++) {
-      if (game[i]) {
+      if (i == this.props.currentCat) {
+        if (game[i]) {
+          categories.push(<td className="currentCat">{game[i].name}</td>)
+        }
+        else {
+          categories.push(<td className="currentCat"></td>)
+        }
+      }
+      else if (game[i]) {
         var class_name = "catCol-" + (i + 1);
-        categories.push(<td className={class_name}>{game[i].name}</td>)
+        categories.push(<td className={class_name} onClick={this.handleClick(i)}>{game[i].name}</td>)
       }
       else {
         categories.push(<td></td>)
@@ -58,9 +71,17 @@ class PreviewGame extends React.Component {
       var questions = [];
       for (var j = 0; j < 6; j++) {
         var class_name = "catCol-" + (j + 1);
-
-        if (game[j]) {
-          questions.push(<td className={class_name}>{game[j].questions[String(i)]}</td>);
+        if (j == this.props.currentCat) {
+          if (game[j]) {
+            questions.push(<td className="currentCat">{game[j].questions[String(i)]}</td>);
+          }
+          else {
+            questions.push(<td className="currentCat"></td>);
+          }
+        }
+        else if (game[j]) {
+          var class_name = "catCol-" + (j + 1);
+          questions.push(<td className={class_name} onClick={this.handleClick(j)}>{game[j].questions[String(i)]}</td>);
         }
         else {
           questions.push(<td></td>);
@@ -72,6 +93,7 @@ class PreviewGame extends React.Component {
   }
 
   render () {
+        this.setHover();
 
     return(
       <table className="preview-game">
@@ -97,8 +119,11 @@ class Creator extends React.Component {
       gameID: null,
       gameName: "",
       cats_to_push: [],
-      preview_game: []
+      preview_game: [],
+      currentCat: 0,
+      editMode: false
     }
+    this.loadCat = this.loadCat.bind(this);
   }
 
     createGame = event => {
@@ -140,6 +165,15 @@ class Creator extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    if (this.state.editMode) {
+      fetch('api/categories/' + this.state.preview_game[this.state.currentCat], {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + Auth.getToken()
+        }
+      })
+    }
     var category = {
       "name": this.state.category_title,
       "questions": {
@@ -148,11 +182,11 @@ class Creator extends React.Component {
         "300": this.state.q3,
         "400": this.state.q4,
         "500": this.state.q5
-      }
+      },
+      _id: null
     }
-    var pg = this.state.preview_game;
-    pg.push(category);
-    this.setState({preview_game: pg});
+    
+    
     fetch('api/categories', {
         method: 'POST',
         headers: {
@@ -160,13 +194,35 @@ class Creator extends React.Component {
           'Authorization': 'Bearer ' + Auth.getToken()
         },
         body: JSON.stringify({
-          "name": category.name
+          "name": category.name,
+          "index": this.state.currentCat  
         })
       })
       .then(res => res.json())
       .then(res => {
         var _id = res._id;
-        this.state.cats_to_push.push(_id);
+        var pg = this.state.preview_game;
+        category._id = _id;
+        if (this.state.editMode) {
+          this.state.cats_to_push[this.state.currentCat] = _id;
+          pg[this.state.currentCat] = category;
+        }
+        else {
+          this.state.cats_to_push.push(_id);
+          pg.push(category);
+        }
+        if (this.state.editMode) {
+          while (pg[this.state.currentCat]) {
+            this.state.currentCat++;
+          }
+        }
+        else {
+          this.state.currentCat++;
+        }
+        this.setState({
+          preview_game: pg,
+          editMode: false
+        });
         for (var j = 0; j < 5; j++) {
           fetch('api/categories/' + _id + '/questions', {
             method: 'POST',
@@ -211,6 +267,28 @@ class Creator extends React.Component {
     }
   }
 
+  loadCat(cat) {
+    this.setState({currentCat: cat});
+     fetch('api/categories/' + this.state.preview_game[cat]._id, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + Auth.getToken()
+        }
+      }).then(res => res.json())
+      .then(res => {
+        this.setState({
+          category_title: res.name,
+          q1: res.questions.filter(function(data){return data.value == 100})[0].question,
+          q2: res.questions.filter(function(data){return data.value == 200})[0].question,
+          q3: res.questions.filter(function(data){return data.value == 300})[0].question,
+          q4: res.questions.filter(function(data){return data.value == 400})[0].question,
+          q5: res.questions.filter(function(data){return data.value == 500})[0].question,
+          editMode: true
+        })
+      })
+  }
+
   render() {
     return(
       <div>
@@ -247,13 +325,13 @@ class Creator extends React.Component {
         <FormGroup className="formgroup2" controlId="q5">
           <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
         </FormGroup>
-        <Button className="button" disabled={!this.categoryComplete()} type="submit">Submit</Button>
+        <Button className="button" disabled={!this.categoryComplete()} type="submit">Save</Button>
 
       </form>
       
     </Col>
     <Col sm={8}>
-    <PreviewGame game={this.state.preview_game}/>
+    <PreviewGame game={this.state.preview_game} currentCat={this.state.currentCat} loadCat={this.loadCat}/>
     </Col>
       </Row>
       </div>

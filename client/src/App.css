@@ -194,6 +194,7 @@ html {
   margin: 0px;
   float: left;
   color: white;
+  fonst-size: 10pt;
 }
 
 .category-form {
@@ -223,6 +224,7 @@ html {
   height: 100%;
   table-layout: fixed;
   margin-top: 20px;
+  font-size: 8pt;
 }
 
 .preview-row {
@@ -233,6 +235,7 @@ html {
 .preview-category-row {
   height: 8vh;
   border: 3px solid black;
+  font-size: 12pt;
 }
 
 td {
@@ -250,32 +253,7 @@ td {
   margin-right: 20px;
 }
 
-.catCol-1:hover {
-  background-color: yellow;
-  color: black;
-} 
-
-.catCol-2:hover {
-  background-color: yellow;
-  color: black;
-} 
-
-.catCol-3:hover {
-  background-color: yellow;
-  color: black;
-} 
-
-.catCol-4:hover {
-  background-color: yellow;
-  color: black;
-} 
-
-.catCol-5:hover {
-  background-color: yellow;
-  color: black;
-} 
-
-.catCol-6:hover {
-  background-color: yellow;
-  color: black;
-} 
+.currentCat {
+  background: green !important;
+  color: white !important;
+}

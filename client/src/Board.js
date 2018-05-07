@@ -79,52 +79,52 @@ class Board extends React.Component {
     return (
       <div>
         <div className="board-row">
-          {this.renderCategorySquare(this.state.game.categories[0].name, 1)}
-          {this.renderCategorySquare(this.state.game.categories[1].name, 2)}
-          {this.renderCategorySquare(this.state.game.categories[2].name, 3)}
-          {this.renderCategorySquare(this.state.game.categories[3].name, 4)}
-          {this.renderCategorySquare(this.state.game.categories[4].name, 5)}
-          {this.renderCategorySquare(this.state.game.categories[5].name, 6)}
+          {this.renderCategorySquare(this.state.game.categories.filter(function(data){return data.index == 0})[0].name, 1)}
+          {this.renderCategorySquare(this.state.game.categories.filter(function(data){return data.index == 1})[0].name, 2)}
+          {this.renderCategorySquare(this.state.game.categories.filter(function(data){return data.index == 2})[0].name, 3)}
+          {this.renderCategorySquare(this.state.game.categories.filter(function(data){return data.index == 3})[0].name, 4)}
+          {this.renderCategorySquare(this.state.game.categories.filter(function(data){return data.index == 4})[0].name, 5)}
+          {this.renderCategorySquare(this.state.game.categories.filter(function(data){return data.index == 5})[0].name, 6)}
         </div>
         <div className="board-row">
-          {this.renderSquare(this.state.game.categories[0].questions.filter(function(data){return data.value == 100})[0], 1)}
-          {this.renderSquare(this.state.game.categories[1].questions.filter(function(data){return data.value == 100})[0], 2)}
-          {this.renderSquare(this.state.game.categories[2].questions.filter(function(data){return data.value == 100})[0], 3)}
-          {this.renderSquare(this.state.game.categories[3].questions.filter(function(data){return data.value == 100})[0], 4)}
-          {this.renderSquare(this.state.game.categories[4].questions.filter(function(data){return data.value == 100})[0], 5)}
-          {this.renderSquare(this.state.game.categories[5].questions.filter(function(data){return data.value == 100})[0], 6)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 0})[0].questions.filter(function(data){return data.value == 100})[0], 1)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 1})[0].questions.filter(function(data){return data.value == 100})[0], 2)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 2})[0].questions.filter(function(data){return data.value == 100})[0], 3)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 3})[0].questions.filter(function(data){return data.value == 100})[0], 4)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 4})[0].questions.filter(function(data){return data.value == 100})[0], 5)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 5})[0].questions.filter(function(data){return data.value == 100})[0], 6)}
         </div>
         <div className="board-row">
-          {this.renderSquare(this.state.game.categories[0].questions.filter(function(data){return data.value == 200})[0], 7)}
-          {this.renderSquare(this.state.game.categories[1].questions.filter(function(data){return data.value == 200})[0], 8)}
-          {this.renderSquare(this.state.game.categories[2].questions.filter(function(data){return data.value == 200})[0], 9)}
-          {this.renderSquare(this.state.game.categories[3].questions.filter(function(data){return data.value == 200})[0], 10)}
-          {this.renderSquare(this.state.game.categories[4].questions.filter(function(data){return data.value == 200})[0], 11)}
-          {this.renderSquare(this.state.game.categories[5].questions.filter(function(data){return data.value == 200})[0], 12)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 0})[0].questions.filter(function(data){return data.value == 200})[0], 7)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 1})[0].questions.filter(function(data){return data.value == 200})[0], 8)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 2})[0].questions.filter(function(data){return data.value == 200})[0], 9)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 3})[0].questions.filter(function(data){return data.value == 200})[0], 10)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 4})[0].questions.filter(function(data){return data.value == 200})[0], 11)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 5})[0].questions.filter(function(data){return data.value == 200})[0], 12)}
         </div>
         <div className="board-row">
-          {this.renderSquare(this.state.game.categories[0].questions.filter(function(data){return data.value == 300})[0], 13)}
-          {this.renderSquare(this.state.game.categories[1].questions.filter(function(data){return data.value == 300})[0], 14)}
-          {this.renderSquare(this.state.game.categories[2].questions.filter(function(data){return data.value == 300})[0], 15)}
-          {this.renderSquare(this.state.game.categories[3].questions.filter(function(data){return data.value == 300})[0], 16)}
-          {this.renderSquare(this.state.game.categories[4].questions.filter(function(data){return data.value == 300})[0], 17)}
-          {this.renderSquare(this.state.game.categories[5].questions.filter(function(data){return data.value == 300})[0], 18)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 0})[0].questions.filter(function(data){return data.value == 300})[0], 13)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 1})[0].questions.filter(function(data){return data.value == 300})[0], 14)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 2})[0].questions.filter(function(data){return data.value == 300})[0], 15)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 3})[0].questions.filter(function(data){return data.value == 300})[0], 16)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 4})[0].questions.filter(function(data){return data.value == 300})[0], 17)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 5})[0].questions.filter(function(data){return data.value == 300})[0], 18)}
         </div>
         <div className="board-row">
-          {this.renderSquare(this.state.game.categories[0].questions.filter(function(data){return data.value == 400})[0], 19)}
-          {this.renderSquare(this.state.game.categories[1].questions.filter(function(data){return data.value == 400})[0], 20)}
-          {this.renderSquare(this.state.game.categories[2].questions.filter(function(data){return data.value == 400})[0], 21)}
-          {this.renderSquare(this.state.game.categories[3].questions.filter(function(data){return data.value == 400})[0], 22)}
-          {this.renderSquare(this.state.game.categories[4].questions.filter(function(data){return data.value == 400})[0], 23)}
-          {this.renderSquare(this.state.game.categories[5].questions.filter(function(data){return data.value == 400})[0], 24)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 0})[0].questions.filter(function(data){return data.value == 400})[0], 19)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 1})[0].questions.filter(function(data){return data.value == 400})[0], 20)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 2})[0].questions.filter(function(data){return data.value == 400})[0], 21)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 3})[0].questions.filter(function(data){return data.value == 400})[0], 22)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 4})[0].questions.filter(function(data){return data.value == 400})[0], 23)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 5})[0].questions.filter(function(data){return data.value == 400})[0], 24)}
         </div>
         <div className="board-row">
-          {this.renderSquare(this.state.game.categories[0].questions.filter(function(data){return data.value == 500})[0], 25)}
-          {this.renderSquare(this.state.game.categories[1].questions.filter(function(data){return data.value == 500})[0], 26)}
-          {this.renderSquare(this.state.game.categories[2].questions.filter(function(data){return data.value == 500})[0], 27)}
-          {this.renderSquare(this.state.game.categories[3].questions.filter(function(data){return data.value == 500})[0], 28)}
-          {this.renderSquare(this.state.game.categories[4].questions.filter(function(data){return data.value == 500})[0], 29)}
-          {this.renderSquare(this.state.game.categories[5].questions.filter(function(data){return data.value == 500})[0], 30)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 0})[0].questions.filter(function(data){return data.value == 500})[0], 25)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 1})[0].questions.filter(function(data){return data.value == 500})[0], 26)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 2})[0].questions.filter(function(data){return data.value == 500})[0], 27)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 3})[0].questions.filter(function(data){return data.value == 500})[0], 28)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 4})[0].questions.filter(function(data){return data.value == 500})[0], 29)}
+          {this.renderSquare(this.state.game.categories.filter(function(data){return data.index == 5})[0].questions.filter(function(data){return data.value == 500})[0], 30)}
         </div>
       </div>
     );
