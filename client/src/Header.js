@@ -54,7 +54,7 @@ class Header extends React.Component {
     }
     else {
       return (
-        <span>Logged In as {Auth.getUserName()}
+        <span className="login-notification">Logged In as {Auth.getUserName()}
         <button className="btn btn-warning logout-button" onClick={this.handleLogout}>Log Out</button></span>
       )
     }

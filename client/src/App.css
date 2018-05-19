@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Oswald');
+
 body {
   background: linear-gradient(tan, white);
   height: 100%;
@@ -194,7 +196,7 @@ html {
   margin: 0px;
   float: left;
   color: white;
-  fonst-size: 10pt;
+  font-size: 10pt;
 }
 
 .category-form {
@@ -256,4 +258,13 @@ td {
 .currentCat {
   background: green !important;
   color: white !important;
+}
+
+.login-notification {
+  margin-left: 10px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14pt;
+
+
+
 }

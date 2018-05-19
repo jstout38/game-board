@@ -52,7 +52,7 @@ class PreviewGame extends React.Component {
     for(var i=0; i < 6; i++) {
       if (i == this.props.currentCat) {
         if (game[i]) {
-          categories.push(<td className="currentCat">{game[i].name}</td>)
+          categories.push(<td className="currentCat">{game[i].name}</td>);
         }
         else {
           categories.push(<td className="currentCat"></td>)
@@ -234,11 +234,14 @@ class Creator extends React.Component {
               "question": category.questions[String((j+1) * 100)],
               "value": ((j + 1) * 100)
             })
-          })
+          }, err => {
+            console.log(err);
+          });
         }
         
 
-      })        
+      }).catch(console.error);
+
     this.setState({
       category_title: "",
       q1: "",
@@ -308,24 +311,24 @@ class Creator extends React.Component {
       <form className="category-form" onSubmit={this.handleSubmit}>
         
         <FormGroup className="formgroup2" controlId="category_title">
-          <FormControl className="formcontrol category-input" type="textarea" value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
+          <FormControl className="formcontrol category-input" type="textarea" maxlength={28} value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q1">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q2">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q3">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q4">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q5">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
         </FormGroup>
-        <Button className="button" disabled={!this.categoryComplete()} type="submit">Save</Button>
+        <Button className="button" disabled={!this.categoryComplete()} type="submit">Save </Button>
 
       </form>
       
