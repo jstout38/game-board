@@ -296,7 +296,7 @@ class Creator extends React.Component {
     return(
       <div>
       <Row>
-      <Button className="button btn-danger close-button" onClick={this.props.closed}>Cancel</Button>
+      <Button className="button btn-danger close-button button-font" onClick={this.props.closed}>Cancel</Button>
       <form onSubmit={this.createGame}>
       <FormGroup className="game-name" controlId="gameName">
         <FormControl className="formcontrol" type="text" value = {this.state.gameName} onChange={this.handleChange} placeholder = "Game Name" />
@@ -328,7 +328,7 @@ class Creator extends React.Component {
         <FormGroup className="formgroup2" controlId="q5">
           <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
         </FormGroup>
-        <Button className="button" disabled={!this.categoryComplete()} type="submit">Save </Button>
+        <Button className="button button-font" disabled={!this.categoryComplete()} type="submit">Save </Button>
 
       </form>
       

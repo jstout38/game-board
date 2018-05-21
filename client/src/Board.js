@@ -74,7 +74,6 @@ class Board extends React.Component {
 
 
   render() {
-    const status = 'Next player: X';
     if (this.state.game.categories && !this.state.questionMode) {
     return (
       <div>
@@ -133,7 +132,7 @@ class Board extends React.Component {
     return(<Question question={this.state.currentQuestion} onClick = {() => this.returnToBoard()}/>);
   }
   else {
-    return <p>Test</p>;
+    return <p>Loading...</p>;
   }
   }
 }

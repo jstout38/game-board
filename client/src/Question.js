@@ -5,7 +5,7 @@ class Question extends React.Component {
     return (
       <div className="question">
         <p class="questionText">{this.props.question}</p>
-        <button onClick={() => this.props.onClick()}>Return</button>
+        <button className="btn btn-danger btn-lg" onClick={() => this.props.onClick()}>Close</button>
       </div>
       );
   }

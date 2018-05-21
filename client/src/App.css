@@ -1,7 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Oswald');
+@import url('https://fonts.googleapis.com/css?family=Patua+One');
+ @import url('https://fonts.googleapis.com/css?family=Gothic+A1');
 
 body {
   background: linear-gradient(tan, white);
+  background-image: url('large_leather.png');
   height: 100%;
   width: 100%;
 }
@@ -21,7 +24,6 @@ html {
 }
 
 .App-header {
-  background-color: #222;
   height: 150px;
   padding: 20px;
   color: white;
@@ -94,6 +96,7 @@ html {
 }
 
 .control-panel {
+  font-family: 'Oswald', sans-serif;
   margin-left: 72%;
   padding-left: 50px;
   padding-top: 20px;
@@ -104,14 +107,17 @@ html {
   margin: auto;
 }
 
-.return {
+.return, .reload {
   float: left;
+  margin-bottom: 10px;
 }
 
 .game-header {
   line-height: 10vh;
   height: 10vh;
-  float:;
+  background-image: url('hixs_pattern_evolution.png') !important;
+  color: beige;
+  margin-bottom: 20px;
 }
 
 .placeholder {
@@ -139,9 +145,13 @@ html {
   margin-right: auto;
 }
 
+img {
+  width: 100%;
+}
+
 @keyframes stretch {
   0% {
-    transform: scale(.3);
+    transform: scale(.1);
   }
   100% {
     transform: scale(1);
@@ -161,7 +171,7 @@ html {
   font-size: 48pt;
   vertical-align: middle;
   animation-name: stretch;
-  animation-duration: 1s;
+  animation-duration: .3s;
   animation-function: ease-in;
   animation-delay: 0;
 }
@@ -175,7 +185,9 @@ html {
 }
 
 .game-button {
+  font-family: 'Oswald', sans-serif;
   margin-bottom: 20px;
+  margin-top: 30px;
   float: left;
 }
 
@@ -217,6 +229,7 @@ html {
   }
 
 .game-create-button {
+  font-family: 'Oswald', sans-serif;
   margin: auto;
 }
 
@@ -247,10 +260,12 @@ td {
 }
 
 .formgroup, .login-button, .register-button {
+  font-family: 'Oswald', sans-serif;
   margin-right: 10px;
 }
 
 .close-button {
+  font-family: 'Oswald' sans-serif;
   float: right;
   margin-right: 20px;
 }
@@ -264,7 +279,23 @@ td {
   margin-left: 10px;
   font-family: 'Oswald', sans-serif;
   font-size: 14pt;
+}
 
+.button-font {
+  font-family: 'Oswald', sans-serif;
+}
 
+.button-row {
+  height: 10%;
+  line-height: 10%;
+}
 
+h1 {
+  font-family: 'Patua One', cursive;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-family: 'Gothic A1', sans-serif;
+  margin-bottom: 30px;
 }

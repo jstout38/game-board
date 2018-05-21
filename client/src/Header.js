@@ -31,6 +31,11 @@ class Header extends React.Component {
     this.props.logout();
   }
 
+  handleRegister = event => {
+    this.setState({"username": "", "password": ""});
+    this.props.loadRegistration();
+  }
+
   render() {
     if (!Auth.isUserAuthenticated()) {
       return (
@@ -47,7 +52,7 @@ class Header extends React.Component {
           </FormGroup>
           
           <button className="btn btn-success login-button" type="submit">Submit</button>
-          <button className="btn btn-info register-button" onClick={this.props.loadRegistration}>Register</button>
+          <button className="btn btn-info register-button" onClick={this.handleRegister}>Register</button>
           
         </Form>
       ) 

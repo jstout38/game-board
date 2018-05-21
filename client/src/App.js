@@ -70,12 +70,10 @@ class App extends Component {
         method: 'post',
         headers: new Headers({
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'http://localhost:3001',
-          'Origin': 'http://localhost:3001'
         }),
         body: JSON.stringify({
           "username": username,
-          "password": password,
+          "password": password
         }),
       })
       .then(res => res.json())
@@ -93,7 +91,7 @@ class App extends Component {
   logout = () => {
     Auth.deauthenticateUser();
     CurrentGame.quitGame();
-    this.setState({user: null, clearboard: true}, function () {this.forceUpdate});
+    this.setState({user: null, username: null, clearboard: true}, function () {this.forceUpdate});
   }
 
   render() {

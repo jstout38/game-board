@@ -5,6 +5,8 @@ import Board from './Board';
 import Creator from './Creator';
 import CurrentGame from './CurrentGame';
 import ControlPanel from './ControlPanel';
+import Creator_image from './Creator.png';
+import board_image from './Board.png';
 
 class Game extends React.Component {
   constructor(props) {
@@ -18,7 +20,9 @@ class Game extends React.Component {
       confirm: "",
       checkboxes: {},
       newGame: false,
-      readyToSubmit: false
+      readyToSubmit: false,
+      registration_username: "",
+      registration_password: ""
     } 
     this.handleClick = this.handleClick.bind(this);   
     this.handleCreate = this.handleCreate.bind(this);
@@ -46,7 +50,7 @@ class Game extends React.Component {
           }
           this.setState({checkboxes: newCheckboxes});
         });
-    } 
+    }    
     else {
       this.setState({
         createGame: false
@@ -54,8 +58,11 @@ class Game extends React.Component {
     }    
   }
 
-  componentWillReceiveProps() {    
-    this.componentDidMount();    
+  componentWillReceiveProps(newProps) {    
+    this.componentDidMount(); 
+    if (newProps.registering) {
+      this.setState({"registration_username": "", "registration_password": ""})
+    }   
   } 
 
   handleClick = (gameID) => (e) => {
@@ -81,10 +88,10 @@ class Game extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    this.props.register(this.state.username, this.state.password);
+    this.props.register(this.state.registration_username, this.state.registration_password);
     this.setState({
-      username: "",
-      password: "",
+      registration_username: "",
+      registration_password: "",
       confirm: ""
     })
   }
@@ -93,6 +100,11 @@ class Game extends React.Component {
     this.setState({
       [event.target.id]: event.target.value
     })
+  }
+
+  loadSampleGame = event => {
+    CurrentGame.setGame("5b021835cf8a4a29d83de681");
+    this.setState({"currentGame": "5b021835cf8a4a29d83de681", "newGame": true}, function () {this.forceUpdate()});
   }
 
   handleDelete = event => {
@@ -116,14 +128,14 @@ class Game extends React.Component {
   }
 
   validateUserName() {
-    const length = this.state.username.length;
+    const length = this.state.registration_username.length;
     if (length > 7) return 'success'
     else if (length === 0) return null
     else return 'error';
   }
 
   validatePassword() {
-    const length = this.state.password.length;
+    const length = this.state.registration_password.length;
     if (length > 7) return 'success'
     else if (length === 0) return null
     else return 'error';
@@ -131,7 +143,7 @@ class Game extends React.Component {
 
   confirmPassword() {
     const length = this.state.confirm.length
-    if (this.state.password === this.state.confirm && length > 7) return 'success'
+    if (this.state.registration_password === this.state.confirm && length > 7) return 'success'
     else if (length === 0) return null
     else return 'error';
   }
@@ -160,13 +172,13 @@ class Game extends React.Component {
           <form onSubmit={this.handleSubmit}>
           
           
-          <FormGroup controlId="username" className="registration-formgroup" validationState={this.validateUserName()}>
-            <FormControl className="formcontrol" value = {this.state.username} onChange={this.handleChange} type="text" placeholder="Enter User Name"/>
+          <FormGroup controlId="registration_username" className="registration-formgroup" validationState={this.validateUserName()}>
+            <FormControl className="formcontrol" value = {this.state.registration_username} onChange={this.handleChange} type="text" placeholder="Enter User Name"/>
             <FormControl.Feedback />
             <HelpBlock className="help">Username must be at least 8 characters.</HelpBlock>
           </FormGroup>
-          <FormGroup className="registration-formgroup" controlId="password" validationState = {this.validatePassword()}>
-            <FormControl type="password" className="formcontrol" value= {this.state.password} onChange={this.handleChange}  placeholder = "Enter Password" />
+          <FormGroup className="registration-formgroup" controlId="registration_password" validationState = {this.validatePassword()}>
+            <FormControl type="password" className="formcontrol" value= {this.state.registration_password} onChange={this.handleChange}  placeholder = "Enter Password" />
             <FormControl.Feedback />
             <HelpBlock className="help">Password must be at least 8 characters.</HelpBlock>
           </FormGroup>
@@ -175,7 +187,7 @@ class Game extends React.Component {
             <FormControl.Feedback />
             <HelpBlock className="help">Passwords must match.</HelpBlock>
           </FormGroup>
-          <Button className="button" disabled={this.validateUserName() !== 'success' || this.validatePassword() !== 'success' || this.confirmPassword() !== 'success'} className="registration-formgroup" type="submit">Submit</Button>
+          <Button className="button button-font" disabled={this.validateUserName() !== 'success' || this.validatePassword() !== 'success' || this.confirmPassword() !== 'success'} className="registration-formgroup" type="submit">Submit</Button>
 
         </form>
         )
@@ -196,16 +208,16 @@ class Game extends React.Component {
         }
         games.push(<Row>
           <Col sm={2} smOffset={1}>
-            <button className="btn btn-success" onClick={this.handleClick(-1)}>Create New Game</button>
+            <button className="btn btn-success button-font" onClick={this.handleClick(-1)}>Create New Game</button>
           </Col>
           <Col sm={2}>
-            <button className="btn btn-danger" onClick={this.handleDelete.bind(this)}>Delete Games</button>
+            <button className="btn btn-danger button-font" onClick={this.handleDelete.bind(this)}>Delete Games</button>
           </Col>
           </Row>);
 
         return games;
       }
-      else if (this.state.currentGame && this.props.user) {
+      else if (this.state.currentGame) {
         return (
           <div className="board-container">
           <div className="game-board">
@@ -226,8 +238,25 @@ class Game extends React.Component {
       }
       else {
         return (
-          <p>Log in!</p>
-          
+          <div>
+          <Row>
+          <h1>Welcome to the Quiz Board App!</h1>
+          </Row>
+          <Row>
+          <h2>Create your own customized quiz boards!</h2>
+          </Row>
+          <Row sm={12}>
+          <Col sm={5} smOffset={1}>
+          <img src={Creator_image}></img>
+          </Col>
+          <Col sm={4}>
+          <img src={board_image}></img>
+          </Col>
+          </Row>
+          <Col sm={4} smOffset={4}>
+          <button className="btn btn-primary btn-block btn-lg game-button" onClick={this.loadSampleGame}>See a sample game!</button>
+          </Col>
+          </div>
         );
       }
   }
