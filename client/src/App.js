@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
-import { FormGroup, FormControl, HelpBlock, ControlLabel, Button, Row, Col } from 'react-bootstrap';
 import Auth from './Auth';
 import CurrentGame from './CurrentGame';
 import Header from './Header';
@@ -55,7 +53,7 @@ class App extends Component {
         this.setState({registering: false});
       }
       else {
-        if (res.err.name = "UserExistsError") {
+        if (res.err.name === "UserExistsError") {
           alert("Username already exists, try again!");
         }
         else {
@@ -91,7 +89,7 @@ class App extends Component {
   logout = () => {
     Auth.deauthenticateUser();
     CurrentGame.quitGame();
-    this.setState({user: null, username: null, clearboard: true}, function () {this.forceUpdate});
+    this.setState({user: null, username: null, clearboard: true}, function () {this.forceUpdate()});
   }
 
   render() {

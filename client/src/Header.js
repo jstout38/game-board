@@ -1,6 +1,6 @@
 import React from 'react';
 import Auth from './Auth';
-import { Form, FormGroup, FormControl, HelpBlock, ControlLabel, Button, Row, Col } from 'react-bootstrap';
+import { Form, FormGroup, FormControl } from 'react-bootstrap';
 
 class Header extends React.Component {
   constructor(props) {

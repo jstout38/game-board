@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { FormGroup, FormControl, HelpBlock, ControlLabel, Button, Row, Col } from 'react-bootstrap';
+import React from 'react';
+import { FormGroup, FormControl, Button, Row, Col } from 'react-bootstrap';
 import Auth from './Auth';
 
 class PreviewGame extends React.Component {
@@ -49,45 +49,46 @@ class PreviewGame extends React.Component {
   createTable = (game) => {
     var table = [];
     var categories = [];
+    var class_name;
     for(var i=0; i < 6; i++) {
-      if (i == this.props.currentCat) {
+      if (i === this.props.currentCat) {
         if (game[i]) {
-          categories.push(<td className="currentCat">{game[i].name}</td>);
+          categories.push(<td key = {"cat " + i} className="currentCat">{game[i].name}</td>);
         }
         else {
-          categories.push(<td className="currentCat"></td>)
+          categories.push(<td key = {"cat " + i} className="currentCat"></td>)
         }
       }
       else if (game[i]) {
-        var class_name = "catCol-" + (i + 1);
-        categories.push(<td className={class_name} onClick={this.handleClick(i)}>{game[i].name}</td>)
+        class_name = "catCol-" + (i + 1);
+        categories.push(<td key = {"cat " + i} className={class_name} onClick={this.handleClick(i)}>{game[i].name}</td>)
       }
       else {
-        categories.push(<td></td>)
+        categories.push(<td key = {"cat " + i}></td>)
       }
     }
-    table.push(<tr className="preview-category-row">{categories}</tr>)
-    for (var i = 100; i < 600; i = i + 100) {
+    table.push(<tr key = "categories" className="preview-category-row">{categories}</tr>)
+    for (i = 100; i < 600; i = i + 100) {
       var questions = [];
       for (var j = 0; j < 6; j++) {
-        var class_name = "catCol-" + (j + 1);
-        if (j == this.props.currentCat) {
+        class_name = "catCol-" + (j + 1);
+        if (j === this.props.currentCat) {
           if (game[j]) {
-            questions.push(<td className="currentCat">{game[j].questions[String(i)]}</td>);
+            questions.push(<td key={i + " " + j} className="currentCat">{game[j].questions[String(i)]}</td>);
           }
           else {
-            questions.push(<td className="currentCat"></td>);
+            questions.push(<td key={i + " " + j} className="currentCat"></td>);
           }
         }
         else if (game[j]) {
-          var class_name = "catCol-" + (j + 1);
-          questions.push(<td className={class_name} onClick={this.handleClick(j)}>{game[j].questions[String(i)]}</td>);
+          class_name = "catCol-" + (j + 1);
+          questions.push(<td key={i + " " + j} className={class_name} onClick={this.handleClick(j)}>{game[j].questions[String(i)]}</td>);
         }
         else {
-          questions.push(<td></td>);
+          questions.push(<td key={i + " " + j}></td>);
         }        
       }
-      table.push(<tr className="preview-row">{questions}</tr>)
+      table.push(<tr key = {i} className="preview-row">{questions}</tr>)
     }
     return table;
   }
@@ -140,21 +141,19 @@ class Creator extends React.Component {
     })
     .then(res => res.json())
     .then(res => {
-      console.log(this.state.cats_to_push);
-      {this.state.gameID = res._id}        
-        fetch('api/games/' + res._id + '/categories', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + Auth.getToken()
-          },
-          body: JSON.stringify({
-            "_ids": this.state.cats_to_push          
-          })
+      this.setState({gameID: res._id});        
+      fetch('api/games/' + res._id + '/categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + Auth.getToken()
+        },
+        body: JSON.stringify({
+          "_ids": this.state.cats_to_push          
         })
-
-      
-    }).then(res => {this.props.created()});
+      })      
+    })
+    .then(res => {this.props.created()});
   }
 
   handleChange = event => {
@@ -202,9 +201,12 @@ class Creator extends React.Component {
       .then(res => {
         var _id = res._id;
         var pg = this.state.preview_game;
+        var cc;
         category._id = _id;
         if (this.state.editMode) {
-          this.state.cats_to_push[this.state.currentCat] = _id;
+          var ctp = this.state.cats_to_push;
+          ctp[this.state.currentCat] = _id;
+          this.setState({cats_to_push: ctp});
           pg[this.state.currentCat] = category;
         }
         else {
@@ -213,11 +215,13 @@ class Creator extends React.Component {
         }
         if (this.state.editMode) {
           while (pg[this.state.currentCat]) {
-            this.state.currentCat++;
+            cc = this.state.currentCat + 1;
+            this.setState({currentCat: cc});
           }
         }
         else {
-          this.state.currentCat++;
+          cc = this.state.currentCat + 1;
+          this.setState({currentCat: cc});
         }
         this.setState({
           preview_game: pg,
@@ -282,11 +286,11 @@ class Creator extends React.Component {
       .then(res => {
         this.setState({
           category_title: res.name,
-          q1: res.questions.filter(function(data){return data.value == 100})[0].question,
-          q2: res.questions.filter(function(data){return data.value == 200})[0].question,
-          q3: res.questions.filter(function(data){return data.value == 300})[0].question,
-          q4: res.questions.filter(function(data){return data.value == 400})[0].question,
-          q5: res.questions.filter(function(data){return data.value == 500})[0].question,
+          q1: res.questions.filter(function(data){return data.value === 100})[0].question,
+          q2: res.questions.filter(function(data){return data.value === 200})[0].question,
+          q3: res.questions.filter(function(data){return data.value === 300})[0].question,
+          q4: res.questions.filter(function(data){return data.value === 400})[0].question,
+          q5: res.questions.filter(function(data){return data.value === 500})[0].question,
           editMode: true
         })
       })
@@ -311,22 +315,22 @@ class Creator extends React.Component {
       <form className="category-form" onSubmit={this.handleSubmit}>
         
         <FormGroup className="formgroup2" controlId="category_title">
-          <FormControl className="formcontrol category-input" type="textarea" maxlength={28} value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
+          <FormControl className="formcontrol category-input" type="textarea" maxLength={28} value= {this.state.category_title} onChange={this.handleChange} placeholder = "Enter Category Title" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q1">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxLength={100} value = {this.state.q1} onChange={this.handleChange} placeholder = "Question 1" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q2">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxLength={100} value = {this.state.q2} onChange={this.handleChange} placeholder = "Question 2" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q3">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxLength={100} value = {this.state.q3} onChange={this.handleChange} placeholder = "Question 3" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q4">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxLength={100} value = {this.state.q4} onChange={this.handleChange} placeholder = "Question 4" />
         </FormGroup>
         <FormGroup className="formgroup2" controlId="q5">
-          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxlength={100} value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
+          <FormControl className="formcontrol question-input" componentClass="textarea" rows={3} maxLength={100} value = {this.state.q5} onChange={this.handleChange} placeholder = "Question 5" />
         </FormGroup>
         <Button className="button button-font" disabled={!this.categoryComplete()} type="submit">Save </Button>
 

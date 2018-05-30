@@ -1,6 +1,6 @@
 import React from 'react';
 import Auth from './Auth';
-import { FormGroup, FormControl, HelpBlock, ControlLabel, Button, Row, Col } from 'react-bootstrap';
+import { FormGroup, FormControl, HelpBlock, Button, Row, Col } from 'react-bootstrap';
 import Board from './Board';
 import Creator from './Creator';
 import CurrentGame from './CurrentGame';
@@ -42,7 +42,6 @@ class Game extends React.Component {
           this.setState({ 
             userGames: games,
             createGame: false,
-            checkboxes: {}
           });
           var newCheckboxes = {};
           for (var i = 0; i < games.length; i++) {
@@ -187,7 +186,7 @@ class Game extends React.Component {
             <FormControl.Feedback />
             <HelpBlock className="help">Passwords must match.</HelpBlock>
           </FormGroup>
-          <Button className="button button-font" disabled={this.validateUserName() !== 'success' || this.validatePassword() !== 'success' || this.confirmPassword() !== 'success'} className="registration-formgroup" type="submit">Submit</Button>
+          <Button className="button button-font registration-formgroup" disabled={this.validateUserName() !== 'success' || this.validatePassword() !== 'success' || this.confirmPassword() !== 'success'} type="submit">Submit</Button>
 
         </form>
         )
@@ -196,17 +195,17 @@ class Game extends React.Component {
         var games = [];
         for (var i = 0; i < this.state.userGames.length; i++) {
           var id = this.state.userGames[i]._id;
-          
-          games.push(<Row>
+          console.log(this.state.checkboxes)
+          games.push(<Row key = {i}>
                       <Col sm={1}>
-                        <input type="checkbox" checked = {this.state.checkboxes[id]} onClick={this.toggle(String(id))} />
+                        <input type="checkbox" checked = {this.state.checkboxes[id] || false} onClick={this.toggle(String(id))} />
                       </Col>
                       <Col sm={4}>
                         <button className="btn btn-primary btn-block game-button" key={id} onClick={this.handleClick(id)}>{this.state.userGames[i].name}</button>
                       </Col>
                     </Row>);
         }
-        games.push(<Row>
+        games.push(<Row key = {"buttons"}>
           <Col sm={2} smOffset={1}>
             <button className="btn btn-success button-font" onClick={this.handleClick(-1)}>Create New Game</button>
           </Col>
@@ -247,10 +246,10 @@ class Game extends React.Component {
           </Row>
           <Row sm={12}>
           <Col sm={5} smOffset={1}>
-          <img src={Creator_image}></img>
+          <img alt="Board Creator" src={Creator_image}></img>
           </Col>
           <Col sm={4}>
-          <img src={board_image}></img>
+          <img alt="Sample Board" src={board_image}></img>
           </Col>
           </Row>
           <Col sm={4} smOffset={4}>
