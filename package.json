@@ -5,7 +5,7 @@
   "scripts": {
     "start": "concurrently \"node ./bin/www\" \"cd client && npm start\"",
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
-    "prod": "concurrently \"node ./bin/www\" \"cd client && npm start\""
+    "prod": "concurrently \"node ./bin/www\" \"cd client && PORT=3001 npm start\""
   },
   "dependencies": {
     "bluebird": "^3.5.1",
