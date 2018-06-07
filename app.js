@@ -18,7 +18,6 @@ var authenticate = require('./authenticate');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 
-
 const mongoose = require('mongoose');
 const url = config.mongoUrl;
 
@@ -60,13 +59,16 @@ app.use(passport.initialize());
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'client', 'build', 'public')));
 
 
 app.use('/api/questions', questionRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/games', gameRouter);
 
+app.get("*", (req, res) => {  
+    res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
