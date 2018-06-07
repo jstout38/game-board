@@ -41,6 +41,10 @@ var options = {
 
 var secureServer = https.createServer(options,app);
 
+app.get("*", (req, res) => {  
+    res.sendFile(path.join(__dirname, "client", "src", "index.html"));
+});
+
 secureServer.listen(app.get('secPort'), () => {
   console.log('Server listening on port ',app.get('secPort'));
 });
