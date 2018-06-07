@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -19,7 +21,7 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 
 const mongoose = require('mongoose');
-const url = config.mongoUrl;
+const url = process.env.MONGODB_URI;
 
 mongoose.Promise = require('bluebird');
 
